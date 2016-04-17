@@ -118,25 +118,6 @@ endif()
 
 if( BUILD_CURL )
 
-  #set( CURL_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/curl )
-  #set( CURL_BUILD_DIR ${CMAKE_BINARY_DIR}/Build/curl )
-
-  # The CMake build system of cURL does not provide an INSTALL target, therefore an individual
-  # install command is implemented below.
-  #if( WIN32 )
-  #  set( CURL_INSTALL_COMMAND
-  #    ${CMAKE_COMMAND} -E copy_directory ${CURL_BUILD_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
-  #    COMMAND	${CMAKE_COMMAND} -E copy ${CURL_BUILD_DIR}/lib/curl_config.h ${DEPENDENCIES_INCLUDE_DIR}
-  #    COMMAND	${CMAKE_COMMAND} -E copy ${CURL_BUILD_DIR}/lib/${CMAKE_BUILD_TYPE}/libcurl.dll ${DEPENDENCIES_LIB_DIR}
-  #  )
-  #else()
-  #  set( CURL_INSTALL_COMMAND
-  #    ${CMAKE_COMMAND} -E copy_directory ${CURL_BUILD_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
-  #    COMMAND	${CMAKE_COMMAND} -E copy ${CURL_BUILD_DIR}/lib/curl_config.h ${DEPENDENCIES_INCLUDE_DIR}
-  #    COMMAND	${CMAKE_COMMAND} -E copy ${CURL_BUILD_DIR}/lib/libcurl.so ${DEPENDENCIES_LIB_DIR}
-  #  )
-  #endif()
-
   ExternalProject_Add(
     curl
     GIT_REPOSITORY https://github.com/bagder/curl.git
