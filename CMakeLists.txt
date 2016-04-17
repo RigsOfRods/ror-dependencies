@@ -506,7 +506,7 @@ endif()
 # ------------------------------------------------------------------------------------------------#
 # Instead of actually building WxWidgets, simply download the precompiled binaries for
 # Visual Studio 2015.
-# For Linux WxWidgets should simply be installed using the distros package management
+# For Linux WxWidgets should be installed using the distros package management.
 
 if( WIN32 AND BUILD_WXWIDGETS )
 
@@ -527,25 +527,7 @@ if( WIN32 AND BUILD_WXWIDGETS )
     SOURCE_DIR ${WXWIDGETS_SOURCE_DIR}/dev
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""
-	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/dev ${DEPENDENCIES_LIB_DIR}
-  )
-
-  ExternalProject_Add(
-	wxwidgets-releasedll
-	URL https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxMSW-3.1.0_vc140_ReleaseDLL.7z
-    SOURCE_DIR ${WXWIDGETS_SOURCE_DIR}/releasedll
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/releasedll ${DEPENDENCIES_LIB_DIR}
-  )
-
-  ExternalProject_Add(
-	wxwidgets-releasepdb
- 	URL https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxMSW-3.1.0_vc140_ReleasePDB.7z
-    SOURCE_DIR ${WXWIDGETS_SOURCE_DIR}/releasepdb
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/releasepdb ${DEPENDENCIES_LIB_DIR}
+	INSTALL_COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${WXWIDGETS_SOURCE_DIR}/dev/vc140_dll -DTARGET_DIR=${DEPENDENCIES_OUTPUT_DIR} -P ${CMAKE_SOURCE_DIR}/cmake/CopyWxWidgetLibs.cmake
   )
 
 endif()		  

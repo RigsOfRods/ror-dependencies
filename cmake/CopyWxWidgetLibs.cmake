@@ -1,0 +1,7 @@
+file( GLOB LIB_FILES ${SOURCE_DIR}/*.lib )
+file( GLOB DLL_FILES ${SOURCE_DIR}/*.dll )
+file( GLOB PDB_FILES ${SOURCE_DIR}/*.pdb )
+
+file( INSTALL ${LIB_FILES} DESTINATION ${TARGET_DIR}/lib/vc_dll )
+file( INSTALL ${DLL_FILES} DESTINATION ${TARGET_DIR}/bin/vc_dll )
+file( INSTALL ${PDB_FILES} DESTINATION ${TARGET_DIR}/bin/vc_dll )
