@@ -43,7 +43,7 @@ option( BUILD_OPENAL       "Build OpenAL audio library"           ON )
 option( BUILD_ANGELSCRIPT  "Build AngelScript scripting library"  ON )
 option( BUILD_SOCKETW      "Build SocketW networking library"     ON )
 option( BUILD_PAGEDGEOMETRY "Build PagedGeometry library"         ON )
-option( BUILD_CAELUM       "Build Caelum library"                 ON )
+option( BUILD_CAELUM       "Build Caelum library"                 OFF )
 
 # Options with different default values on Windows and Linux
 include(CMakeDependentOption)
