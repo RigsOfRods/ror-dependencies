@@ -47,12 +47,10 @@ option( BUILD_CAELUM       "Build Caelum library"                 ON )
 
 # Options with different default values on Windows and Linux
 include(CMakeDependentOption)
-cmake_dependent_option( BUILD_BOOST "Build Boost C++ library collection" ON WIN32 OFF )
 cmake_dependent_option( BUILD_CURL  "Build cURL library"                 ON WIN32 OFF )
 
 # Build options available for Windows only
 if( WIN32 )
-  option( BUILD_PTHREADS   "Build Win32 PThreads implementation"  ON )
   option( BUILD_MOFILEREADER "Build MofileReader"                 ON )
   option( BUILD_WXWIDGETS    "Build WxWidgets"                    ON )
 endif()
@@ -227,92 +225,6 @@ if( BUILD_OPENAL )
 endif()
 
 
-## ------------------------------------------------------------------------------------------------#
-##  PThreads for Windows
-## ------------------------------------------------------------------------------------------------#
-## TODO pthread.h needs to be patched for VS2015 (https://github.com/libusb/libusb/pull/60/files)
-
-if ( WIN32 AND BUILD_PTHREADS )
-
-  set( PTHREADS_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/pthreads-win32 )
-  set( PTHREADS_BUILD_DIR ${CMAKE_BINARY_DIR}/Build/pthreads-win32 )
-
-  ExternalProject_Add(
-    pthreads-win32-download
-    GIT_REPOSITORY https://github.com/martell/pthreads-win32.cmake
-    GIT_SUBMODULES
- 	UPDATE_COMMAND ""
-    SOURCE_DIR ${PTHREADS_SOURCE_DIR}
-    UPDATE_COMMAND ""
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-  )
-
-  set( PTHREAD_HEADER_FILE ${PTHREADS_SOURCE_DIR}/pthreads-win32/pthread.h )
-  ExternalProject_Add(
-    pthreads-win32-patch
-     DEPENDS pthreads-win32-download
-     DOWNLOAD_COMMAND ""
-     CONFIGURE_COMMAND ""
-     BUILD_COMMAND ""
-     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/pthread.h ${PTHREAD_HEADER_FILE}
-  )
-
-  ExternalProject_Add(
-    pthreads-win32
-    DEPENDS pthreads-win32-download pthreads-win32-patch
-    DOWNLOAD_COMMAND ""
-    UPDATE_COMMAND ""
-    CMAKE_ARGS
-	  -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-      -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-  )
-
-endif()
-
-
-
-#------------------------------------------------------------------------------------------------#
-# Boost
-#------------------------------------------------------------------------------------------------#
-
-if( BUILD_BOOST )
-
-  if( UNIX )
-   set( Boost_Bootstrap_Command ./bootstrap.sh )
-   set( Boost_b2_Command ./b2 )
-  elseif( WIN32 )
-     set( Boost_Bootstrap_Command bootstrap.bat )
-     set( Boost_b2_Command b2.exe )
-  endif()
-
-  set( BOOST_BUILD_DIR ${CMAKE_BINARY_DIR}/Build/Boost )
-  set( BOOST_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/Boost )
-
-  ExternalProject_Add(
-   boost
-   URL http://sourceforge.net/projects/boost/files/boost/1.60.0/boost_1_60_0.zip/download
-   BUILD_IN_SOURCE 1
-   UPDATE_COMMAND ""
-   PATCH_COMMAND ""
-   CONFIGURE_COMMAND ${Boost_Bootstrap_Command}
-   BUILD_COMMAND  ${Boost_b2_Command} install
-     --with-regex
-	 --with-system
-     --disable-icu
-     --prefix=${DEPENDENCIES_OUTPUT_DIR}
-     --threading=single,multi
-     --link=static
-     --variant=debug,release
-     -j8
-   INSTALL_COMMAND ""
-  )
-
-endif()
-
-
 
 # ------------------------------------------------------------------------------------------------#
 #  PagedGeometry
@@ -360,12 +272,11 @@ endif()
 if( BUILD_CAELUM )
 
   if( WIN32 )
-    # Set paths to help find Ogre and Boost on Windows
+    # Set paths to help find Ogre on Windows
     set( PAGEDGEOMETRY_CMAKE_ARGS
 	  -DOgre_INCLUDE_DIRS=${DEPENDENCIES_INCLUDE_DIR}/OGRE
 	  -DOgre_LIBRARY_DIRS=${DEPENDENCIES_LIB_DIR}
 	  -DOgre_LIBRARIES=${DEPENDENCIES_LIB_DIR}/OgreMain
-	  -DBoost_INCLUDE_DIR=${DEPENDENCIES_INCLUDE_DIR}/boost-1_60  # TODO hardcoded Boost version
     )
   elseif( UNIX )
     # Set pkgconfig path on Linux
@@ -376,7 +287,7 @@ if( BUILD_CAELUM )
 
   ExternalProject_Add(
     caelum
-    DEPENDS ogre boost # TODO What if Boost is not being build, but already installed?
+    DEPENDS ogre
     GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum.git
     UPDATE_COMMAND ""
     CMAKE_ARGS
