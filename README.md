@@ -39,6 +39,5 @@ The resulting dependencies will be placed inside the `Dependencies_Linux` direct
   
 ## Known issues
 
-  * Only OpenGL render backend is built
   * WxWidgets is not built from source; instead pre-built binaries are downloaded (might require VS2015 runtime for distributing)
   
