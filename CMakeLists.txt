@@ -423,4 +423,13 @@ if( WIN32 AND BUILD_WXWIDGETS )
 	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/dev/vc140_dll ${DEPENDENCIES_LIB_DIR}/vc_dll
   )
 
+  ExternalProject_Add(
+	wxwidgets-dll
+	URL https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxMSW-3.1.0_vc140_ReleaseDLL.7z
+    SOURCE_DIR ${WXWIDGETS_SOURCE_DIR}/dll
+	CONFIGURE_COMMAND ""
+	BUILD_COMMAND ""
+	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/dll/vc140_dll ${DEPENDENCIES_BIN_DIR}/vc_dll
+  )
+  
 endif()		  
