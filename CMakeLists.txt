@@ -148,6 +148,13 @@ if( BUILD_OGRE )
       -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/OgreDependencies
   )
 
+  # By default the cg.dll is only installed in the build directory. Therefore manually copy it to the dependency output directory.
+  ExternalProject_Add_Step(
+    ogredeps copy_cg_dll
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/Build/ogredeps/bin/Release/cg.dll ${DEPENDENCIES_BIN_DIR}/cg.dll
+	DEPENDEES build
+  )
+
   ExternalProject_Add(
     ogre
     DEPENDS ogredeps
