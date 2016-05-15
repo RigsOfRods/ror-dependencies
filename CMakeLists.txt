@@ -43,7 +43,7 @@ option( BUILD_OPENAL       "Build OpenAL audio library"           ON )
 option( BUILD_ANGELSCRIPT  "Build AngelScript scripting library"  ON )
 option( BUILD_SOCKETW      "Build SocketW networking library"     ON )
 option( BUILD_PAGEDGEOMETRY "Build PagedGeometry library"         ON )
-option( BUILD_CAELUM       "Build Caelum library"                 OFF )
+option( BUILD_CAELUM       "Build Caelum library"                 ON )
 
 # Options with different default values on Windows and Linux
 include(CMakeDependentOption)
@@ -295,7 +295,10 @@ if( BUILD_CAELUM )
   ExternalProject_Add(
     caelum
     DEPENDS ogre
-    GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum.git
+	# TODO temporarily use alternative sources which build without Boost
+    #GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum.git
+	GIT_REPOSITORY https://github.com/tritonas00/ogre-caelum.git
+	GIT_TAG boost-cleanups
     UPDATE_COMMAND ""
     CMAKE_ARGS
       -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
