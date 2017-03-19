@@ -1,17 +1,17 @@
 # The MIT License (MIT)
-# 
+#
 # Copyright (c) 2016 Fabian Killus
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -124,6 +124,7 @@ if( BUILD_CURL )
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
       -DBUILD_CURL_TESTS=OFF
+      -DCMAKE_USE_OPENSSL=OFF
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
   )
@@ -401,7 +402,7 @@ if( WIN32 AND BUILD_MOFILEREADER )
 	COMMAND	${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/lib ${DEPENDENCIES_LIB_DIR}
   )
 
-endif()		  
+endif()
 
 
 
@@ -415,7 +416,7 @@ endif()
 if( WIN32 AND BUILD_WXWIDGETS )
 
   set( WXWIDGETS_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/wxwidgets )
-  
+
   ExternalProject_Add(
 	wxwidgets-header
 	URL https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidgets-3.1.0-headers.7z
@@ -442,5 +443,5 @@ if( WIN32 AND BUILD_WXWIDGETS )
 	BUILD_COMMAND ""
 	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/dll/vc140_dll ${DEPENDENCIES_BIN_DIR}/vc_dll
   )
-  
-endif()		  
+
+endif()
