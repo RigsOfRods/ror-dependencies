@@ -1,6 +1,11 @@
 # ror-dependencies
 Dependencies that will be needed to compile the source.
 
+|  Build status 	|                                                                                                                                                                                     	|
+|---------------	|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
+| Linux:        	| TODO                                                                                                                                                                                	|
+| Windows:      	| [![appveyor build Status](https://img.shields.io/appveyor/ci/AnotherFoxGuy/ror-dependencies.svg?style=flat-square)](https://ci.appveyor.com/project/AnotherFoxGuy/ror-dependencies) 	|
+
 ## How to build on Windows
 
 ### Prerequisites
@@ -8,6 +13,8 @@ Dependencies that will be needed to compile the source.
   * Install Windows Visual Studio 2015 Community Edition
   * Install [cmake](https://cmake.org/download/)
   * Install [git](https://git-scm.com/download) and [mercurial](https://www.mercurial-scm.org/)
+
+Install with [Chocolatey](https://chocolatey.org/): ```choco install cmake git hg```
 
 ### Create Visual Studio solution file
 
