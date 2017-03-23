@@ -93,7 +93,7 @@ file( MAKE_DIRECTORY ${DEPENDENCIES_BIN_DIR} )
 
 # Compile flags
 if( MSVC )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj" )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /w" )
 endif()
 
 if( UNIX )
@@ -147,6 +147,7 @@ if( BUILD_OGRE )
     CMAKE_ARGS
       -DOGREDEPS_BUILD_SDL2=OFF
       -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/OgreDependencies
+      -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
   )
 
   if( WIN32 )
