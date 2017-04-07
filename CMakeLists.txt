@@ -42,6 +42,7 @@ option( BUILD_MYGUI        "Build MyGUI graphical UI library"     ON )
 option( BUILD_OPENAL       "Build OpenAL audio library"           ON )
 option( BUILD_ANGELSCRIPT  "Build AngelScript scripting library"  ON )
 option( BUILD_SOCKETW      "Build SocketW networking library"     ON )
+option( BUILD_JSONCPP      "Build JsonCpp library"   			  ON )
 option( BUILD_PAGEDGEOMETRY "Build PagedGeometry library"         ON )
 option( BUILD_CAELUM       "Build Caelum library"                 ON )
 
@@ -125,6 +126,25 @@ if( BUILD_CURL )
       -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
       -DBUILD_CURL_TESTS=OFF
       -DCMAKE_USE_OPENSSL=OFF
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+  )
+
+endif()
+
+# ------------------------------------------------------------------------------------------------#
+#  JsonCpp
+# ------------------------------------------------------------------------------------------------#
+
+if( BUILD_JSONCPP )
+
+  ExternalProject_Add(
+    JsonCpp
+    GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp
+    UPDATE_COMMAND ""
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+      -DJSONCPP_WITH_TESTS=OFF
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
   )
