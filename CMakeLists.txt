@@ -320,9 +320,8 @@ if( BUILD_CAELUM )
     caelum
     DEPENDS ogre
 	# TODO temporarily use alternative sources which build without Boost
-    #GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum.git
-	GIT_REPOSITORY https://github.com/tritonas00/ogre-caelum.git
-	GIT_TAG boost-cleanups
+    GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum.git
+	#GIT_TAG boost-cleanups
     UPDATE_COMMAND ""
     CMAKE_ARGS
       -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
