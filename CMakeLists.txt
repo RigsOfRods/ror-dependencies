@@ -1,17 +1,17 @@
 # The MIT License (MIT)
-# 
+#
 # Copyright (c) 2016 Fabian Killus
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -42,6 +42,7 @@ option( BUILD_MYGUI        "Build MyGUI graphical UI library"     ON )
 option( BUILD_OPENAL       "Build OpenAL audio library"           ON )
 option( BUILD_ANGELSCRIPT  "Build AngelScript scripting library"  ON )
 option( BUILD_SOCKETW      "Build SocketW networking library"     ON )
+option( BUILD_JSONCPP      "Build JsonCpp library"   			  ON )
 option( BUILD_PAGEDGEOMETRY "Build PagedGeometry library"         ON )
 option( BUILD_CAELUM       "Build Caelum library"                 ON )
 
@@ -93,7 +94,7 @@ file( MAKE_DIRECTORY ${DEPENDENCIES_BIN_DIR} )
 
 # Compile flags
 if( MSVC )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj" )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /w" )
 endif()
 
 if( UNIX )
@@ -124,6 +125,26 @@ if( BUILD_CURL )
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
       -DBUILD_CURL_TESTS=OFF
+      -DCMAKE_USE_OPENSSL=OFF
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+  )
+
+endif()
+
+# ------------------------------------------------------------------------------------------------#
+#  JsonCpp
+# ------------------------------------------------------------------------------------------------#
+
+if( BUILD_JSONCPP )
+
+  ExternalProject_Add(
+    JsonCpp
+    GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp
+    UPDATE_COMMAND ""
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+      -DJSONCPP_WITH_TESTS=OFF
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
   )
@@ -146,6 +167,7 @@ if( BUILD_OGRE )
     CMAKE_ARGS
       -DOGREDEPS_BUILD_SDL2=OFF
       -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/OgreDependencies
+      -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
   )
 
   if( WIN32 )
@@ -401,7 +423,7 @@ if( WIN32 AND BUILD_MOFILEREADER )
 	COMMAND	${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/lib ${DEPENDENCIES_LIB_DIR}
   )
 
-endif()		  
+endif()
 
 
 
@@ -415,7 +437,7 @@ endif()
 if( WIN32 AND BUILD_WXWIDGETS )
 
   set( WXWIDGETS_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/wxwidgets )
-  
+
   ExternalProject_Add(
 	wxwidgets-header
 	URL https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidgets-3.1.0-headers.7z
@@ -442,5 +464,5 @@ if( WIN32 AND BUILD_WXWIDGETS )
 	BUILD_COMMAND ""
 	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/dll/vc140_dll ${DEPENDENCIES_BIN_DIR}/vc_dll
   )
-  
-endif()		  
+
+endif()
