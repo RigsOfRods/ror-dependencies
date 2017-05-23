@@ -187,6 +187,7 @@ if( BUILD_OGRE )
     UPDATE_COMMAND ""
     PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreTerrain.cpp ${CMAKE_BINARY_DIR}/Source/ogre/Components/Terrain/src/OgreTerrain.cpp  # Fix stackoverflow on terrain load (PR #336)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreD3D9Prerequisites.h ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/include/OgreD3D9Prerequisites.h # workaround for VS2015
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/Ogre_RenderSystem_Direct3D9_CMakeLists.txt ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/CMakeLists.txt # To include bundled DirectX-SDK files
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
       -DOGRE_DEPENDENCIES_DIR=${CMAKE_BINARY_DIR}/OgreDependencies
@@ -197,6 +198,9 @@ if( BUILD_OGRE )
       -DOGRE_BUILD_RENDERSYSTEM_GL3PLUS=ON
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+      -DDirectX9_D3DX9_LIBRARY=${CMAKE_SOURCE_DIR}/win32-directx/lib/x86/d3dx9.lib  # Add bundled DirectX libs
+      -DDirectX9_DXERR_LIBRARY=${CMAKE_SOURCE_DIR}/win32-directx/lib/x86/DxErr.lib  # Add bundled DirectX libs
+      -DDirectX9_BUNDLED_INCLUDE_DIR=${CMAKE_SOURCE_DIR}/win32-directx/include      # Add bundled DirectX headers; requires modified CMakeLists.txt
   )
 
 endif()
