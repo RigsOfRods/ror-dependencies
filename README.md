@@ -12,9 +12,9 @@ Dependencies that will be needed to compile the source.
 
   * Install Windows Visual Studio 2015 Community Edition
   * Install [cmake](https://cmake.org/download/)
-  * Install [git](https://git-scm.com/download) and [mercurial](https://www.mercurial-scm.org/)
+  * Install [git](https://git-scm.com/download)
 
-Install with [Chocolatey](https://chocolatey.org/): ```choco install cmake git hg```
+Install with [Chocolatey](https://chocolatey.org/): ```choco install cmake git```
 
 ### Create Visual Studio solution file
 
