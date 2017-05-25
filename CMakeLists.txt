@@ -37,14 +37,15 @@ project( ror-dependencies VERSION 27 )
 # ------------------------------------------------------------------------------------------------#
 
 # Options with same default value on all platforms
-option( BUILD_OGRE         "Build Ogre3D graphics library"        ON )
-option( BUILD_MYGUI        "Build MyGUI graphical UI library"     ON )
-option( BUILD_OPENAL       "Build OpenAL audio library"           ON )
-option( BUILD_ANGELSCRIPT  "Build AngelScript scripting library"  ON )
-option( BUILD_SOCKETW      "Build SocketW networking library"     ON )
-option( BUILD_JSONCPP      "Build JsonCpp library"                ON )
-option( BUILD_PAGEDGEOMETRY "Build PagedGeometry library"         ON )
-option( BUILD_CAELUM       "Build Caelum library"                 ON )
+option( BUILD_OGRE           "Build Ogre3D graphics library"        ON )
+option( BUILD_MYGUI          "Build MyGUI graphical UI library"     ON )
+option( BUILD_OPENAL         "Build OpenAL audio library"           ON )
+option( BUILD_ANGELSCRIPT    "Build AngelScript scripting library"  ON )
+option( BUILD_SOCKETW        "Build SocketW networking library"     ON )
+option( BUILD_JSONCPP        "Build JsonCpp library"                ON ) # Will be removed
+option( BUILD_RAPIDJSON      "Build RapidJSON library"              ON )
+option( BUILD_PAGEDGEOMETRY  "Build PagedGeometry library"          ON )
+option( BUILD_CAELUM         "Build Caelum library"                 ON )
 
 # Options with different default values on Windows and Linux
 include(CMakeDependentOption)
@@ -146,6 +147,30 @@ if( BUILD_JSONCPP )
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
       -DJSONCPP_WITH_TESTS=OFF
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+  )
+
+endif()
+
+
+# ------------------------------------------------------------------------------------------------#
+#  RapidJSON
+# ------------------------------------------------------------------------------------------------#
+
+if( BUILD_RAPIDJSON )
+
+  ExternalProject_Add(
+    RapidJSON
+    GIT_REPOSITORY https://github.com/miloyip/rapidjson
+    UPDATE_COMMAND ""
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+      -DINCLUDE_INSTALL_DIR=${DEPENDENCIES_OUTPUT_DIR}/include # rapidjson will add "rapidjson" subdirectory
+      -DRAPIDJSON_BUILD_DOC=NO
+      -DRAPIDJSON_BUILD_EXAMPLES=NO
+      -DRAPIDJSON_BUILD_TESTS=NO
+      -DRAPIDJSON_BUILD_THIRDPARTY_GTEST=NO
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
   )
