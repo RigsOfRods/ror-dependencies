@@ -54,6 +54,7 @@ cmake_dependent_option( BUILD_CURL  "Build cURL library"                 ON WIN3
 if( WIN32 )
   option( BUILD_MOFILEREADER "Build MofileReader"                 ON )
   option( BUILD_WXWIDGETS    "Build WxWidgets"                    ON )
+  option( BUILD_CRASHRPT     "Build CrashRpt"                     ON )
 endif()
 
 
@@ -466,6 +467,31 @@ if( WIN32 AND BUILD_WXWIDGETS )
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""
 	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/dll/vc140_dll ${DEPENDENCIES_BIN_DIR}/vc_dll
+  )
+
+endif()
+
+
+# ------------------------------------------------------------------------------------------------#
+#  CrashRpt
+# ------------------------------------------------------------------------------------------------#
+
+if( WIN32 AND BUILD_CRASHRPT )
+
+  set( CRASHRPT_BUILD_DIR ${CMAKE_BINARY_DIR}/Build/CrashRpt )
+  set( CRASHRPT_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/CrashRpt )
+
+  ExternalProject_Add(
+    CrashRpt
+    GIT_REPOSITORY https://github.com/Outerra/crashrpt/
+    UPDATE_COMMAND ""
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_BUILD_DIR}/bin ${DEPENDENCIES_BIN_DIR}
+    COMMAND	${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_SOURCE_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
+    COMMAND	${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_BUILD_DIR}/lib ${DEPENDENCIES_LIB_DIR}
   )
 
 endif()
