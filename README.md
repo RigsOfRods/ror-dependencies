@@ -44,7 +44,3 @@ Install with [Chocolatey](https://chocolatey.org/): ```choco install cmake git h
 	
 The resulting dependencies will be placed inside the `Dependencies_Linux` directory.
   
-## Known issues
-
-  * WxWidgets is not built from source; instead pre-built binaries are downloaded (might require VS2015 runtime for distributing)
-  
