@@ -434,39 +434,24 @@ endif()
 # ------------------------------------------------------------------------------------------------#
 #  WxWidgets
 # ------------------------------------------------------------------------------------------------#
-# Instead of actually building WxWidgets, simply download the precompiled binaries for
-# Visual Studio 2015.
 # For Linux WxWidgets should be installed using the distros package management.
 
 if( WIN32 AND BUILD_WXWIDGETS )
 
-  set( WXWIDGETS_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/wxwidgets )
-
   ExternalProject_Add(
-	wxwidgets-header
-	URL https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidgets-3.1.0-headers.7z
-    SOURCE_DIR ${WXWIDGETS_SOURCE_DIR}/headers
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/headers ${DEPENDENCIES_INCLUDE_DIR}
+    wxwidgets
+    GIT_REPOSITORY https://github.com/TcT2k/wxWidgets/
+    GIT_TAG build_cmake
+    UPDATE_COMMAND ""
+    CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
   )
-
-  ExternalProject_Add(
-	wxwidgets-dev
-	URL https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxMSW-3.1.0_vc140_Dev.7z
-    SOURCE_DIR ${WXWIDGETS_SOURCE_DIR}/dev
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/dev/vc140_dll ${DEPENDENCIES_LIB_DIR}/vc_dll
-  )
-
-  ExternalProject_Add(
-	wxwidgets-dll
-	URL https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxMSW-3.1.0_vc140_ReleaseDLL.7z
-    SOURCE_DIR ${WXWIDGETS_SOURCE_DIR}/dll
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${WXWIDGETS_SOURCE_DIR}/dll/vc140_dll ${DEPENDENCIES_BIN_DIR}/vc_dll
+  ExternalProject_Add_Step(
+	wxwidgets copy_dll_to_bin
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCIES_OUTPUT_DIR}/lib/vc_dll ${DEPENDENCIES_OUTPUT_DIR}/bin
+	DEPENDEES install
   )
 
 endif()
