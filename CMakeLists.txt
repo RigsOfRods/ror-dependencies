@@ -324,9 +324,7 @@ if( BUILD_CAELUM )
   ExternalProject_Add(
     caelum
     DEPENDS ogre
-	# TODO temporarily use alternative sources which build without Boost
     GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum.git
-	#GIT_TAG boost-cleanups
     UPDATE_COMMAND ""
     CMAKE_ARGS
       -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
@@ -334,7 +332,12 @@ if( BUILD_CAELUM )
       ${CAELUM_CMAKE_ARGS}
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-    )
+  )
+  ExternalProject_Add_Step(
+    caelum patch_pluginscfg
+    COMMAND ${CMAKE_COMMAND} -E echo Plugin=Caelum >> ${DEPENDENCIES_BIN_DIR}/release/plugins.cfg
+    DEPENDEES install
+  )
 endif()
 
 
