@@ -183,8 +183,8 @@ if( BUILD_OGRE )
   ExternalProject_Add(
     ogre
     DEPENDS ogredeps
-    HG_REPOSITORY https://bitbucket.org/sinbad/ogre
-    HG_TAG v1-9
+    GIT_REPOSITORY https://github.com/OGRECave/ogre
+    GIT_TAG v1-9
     UPDATE_COMMAND ""
     PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreTerrain.cpp ${CMAKE_BINARY_DIR}/Source/ogre/Components/Terrain/src/OgreTerrain.cpp  # Fix stackoverflow on terrain load (PR #336)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreD3D9Prerequisites.h ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/include/OgreD3D9Prerequisites.h # workaround for VS2015
