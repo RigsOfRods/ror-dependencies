@@ -217,8 +217,7 @@ if( BUILD_MYGUI )
   ExternalProject_Add(
     mygui
     DEPENDS ogre
-    GIT_REPOSITORY https://github.com/MyGUI/mygui
-    GIT_TAG MyGUI3.2.2
+    GIT_REPOSITORY https://github.com/MyGUI/mygui.git
     UPDATE_COMMAND ""
     CMAKE_ARGS
       -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
