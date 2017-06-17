@@ -341,9 +341,9 @@ endif()
 
 
 
-# # ------------------------------------------------------------------------------------------------#
-# #  SocketW
-# # ------------------------------------------------------------------------------------------------#
+# ------------------------------------------------------------------------------------------------#
+#  SocketW
+# ------------------------------------------------------------------------------------------------#
 
 if( BUILD_SOCKETW )
 
@@ -394,6 +394,14 @@ if( BUILD_ANGELSCRIPT )
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include ${DEPENDENCIES_INCLUDE_DIR}
 	COMMAND	${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/lib ${DEPENDENCIES_LIB_DIR}
   )
+  
+  ExternalProject_Add_Step(
+    angelscript patch_angelscripth
+    COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${DEPENDENCIES_INCLUDE_DIR}/angelscript.h
+    COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${DEPENDENCIES_INCLUDE_DIR}/angelscript.h
+    DEPENDEES install
+  )
+
 
 endif()
 
