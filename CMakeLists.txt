@@ -386,6 +386,8 @@ if( BUILD_ANGELSCRIPT )
 	angelscript
 	DEPENDS angelscript-download
 	DOWNLOAD_COMMAND ""
+	PATCH_COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
+	COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
     SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake
 	BUILD_IN_SOURCE 1
     CMAKE_ARGS
@@ -394,14 +396,6 @@ if( BUILD_ANGELSCRIPT )
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include ${DEPENDENCIES_INCLUDE_DIR}
 	COMMAND	${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/lib ${DEPENDENCIES_LIB_DIR}
   )
-  
-  ExternalProject_Add_Step(
-    angelscript patch_angelscripth
-    COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${DEPENDENCIES_INCLUDE_DIR}/angelscript.h
-    COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${DEPENDENCIES_INCLUDE_DIR}/angelscript.h
-    DEPENDEES install
-  )
-
 
 endif()
 
