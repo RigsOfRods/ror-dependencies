@@ -183,8 +183,7 @@ if( BUILD_OGRE )
   ExternalProject_Add(
     ogre
     DEPENDS ogredeps
-    HG_REPOSITORY https://bitbucket.org/sinbad/ogre
-    HG_TAG v1-9
+    URL https://bitbucket.org/sinbad/ogre/get/v1-9-0.tar.gz
     UPDATE_COMMAND ""
     PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreTerrain.cpp ${CMAKE_BINARY_DIR}/Source/ogre/Components/Terrain/src/OgreTerrain.cpp  # Fix stackoverflow on terrain load (PR #336)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreD3D9Prerequisites.h ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/include/OgreD3D9Prerequisites.h # workaround for VS2015
@@ -217,7 +216,7 @@ if( BUILD_MYGUI )
   ExternalProject_Add(
     mygui
     DEPENDS ogre
-    GIT_REPOSITORY https://github.com/MyGUI/mygui.git
+    URL https://github.com/MyGUI/mygui/archive/master.tar.gz
     UPDATE_COMMAND ""
     CMAKE_ARGS
       -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
@@ -444,8 +443,7 @@ if( WIN32 AND BUILD_WXWIDGETS )
 
   ExternalProject_Add(
     wxwidgets
-    GIT_REPOSITORY https://github.com/TcT2k/wxWidgets/
-    GIT_TAG build_cmake
+    URL https://github.com/TcT2k/wxWidgets/archive/build_cmake.tar.gz
     UPDATE_COMMAND ""
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
