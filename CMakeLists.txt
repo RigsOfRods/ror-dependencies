@@ -42,7 +42,7 @@ option( BUILD_MYGUI        "Build MyGUI graphical UI library"     ON )
 option( BUILD_OPENAL       "Build OpenAL audio library"           ON )
 option( BUILD_ANGELSCRIPT  "Build AngelScript scripting library"  ON )
 option( BUILD_SOCKETW      "Build SocketW networking library"     ON )
-option( BUILD_JSONCPP      "Build JsonCpp library"   			  ON )
+option( BUILD_JSONCPP      "Build JsonCpp library"                ON )
 option( BUILD_PAGEDGEOMETRY "Build PagedGeometry library"         ON )
 option( BUILD_CAELUM       "Build Caelum library"                 ON )
 
@@ -54,7 +54,7 @@ cmake_dependent_option( BUILD_CURL  "Build cURL library"                 ON WIN3
 if( WIN32 )
   option( BUILD_MOFILEREADER "Build MofileReader"                 ON )
   option( BUILD_WXWIDGETS    "Build WxWidgets"                    ON )
-  option( BUILD_CRASHRPT     "Build CrashRpt"                     ON )
+  option( BUILD_CRASHRPT     "Build CrashRpt"                     OFF )
 endif()
 
 
@@ -183,8 +183,7 @@ if( BUILD_OGRE )
   ExternalProject_Add(
     ogre
     DEPENDS ogredeps
-    HG_REPOSITORY https://bitbucket.org/sinbad/ogre
-    HG_TAG v1-9
+    URL https://bitbucket.org/sinbad/ogre/get/v1-9-0.tar.gz
     UPDATE_COMMAND ""
     PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreTerrain.cpp ${CMAKE_BINARY_DIR}/Source/ogre/Components/Terrain/src/OgreTerrain.cpp  # Fix stackoverflow on terrain load (PR #336)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreD3D9Prerequisites.h ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/include/OgreD3D9Prerequisites.h # workaround for VS2015
@@ -217,15 +216,15 @@ if( BUILD_MYGUI )
   ExternalProject_Add(
     mygui
     DEPENDS ogre
-    GIT_REPOSITORY https://github.com/MyGUI/mygui.git
+    URL https://github.com/MyGUI/mygui/archive/master.tar.gz
     UPDATE_COMMAND ""
     CMAKE_ARGS
       -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
       -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
       -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
       -DMYGUI_DEPENDENCIES_DIR=${CMAKE_BINARY_DIR}/OgreDependencies
-	  -DOGRE_SOURCE_DIR=${CMAKE_BINARY_DIR}/Source/ogre
-	  -DOGRE_BUILD=${DEPENDENCIES_OUTPUT_DIR}
+      -DOGRE_SOURCE_DIR=${CMAKE_BINARY_DIR}/Source/ogre
+      -DOGRE_BUILD=${DEPENDENCIES_OUTPUT_DIR}
       -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
       -DMYGUI_BUILD_DEMOS=OFF
       -DMYGUI_BUILD_DOCS=OFF
@@ -268,20 +267,20 @@ endif()
 
 if( BUILD_PAGEDGEOMETRY )
 
-	if( WIN32 )
-	  # Set paths to help find Ogre on Windows
-	  set( PAGEDGEOMETRY_CMAKE_ARGS
-		-DOgre_INCLUDE_DIRS=${DEPENDENCIES_INCLUDE_DIR}/OGRE
-		-DOgre_LIBRARY_DIRS=${DEPENDENCIES_LIB_DIR}
-	  )
-	elseif( UNIX )
-	  # Set pkgconfig path to find Ogre on Linux
-	  set( PAGEDGEOMETRY_CMAKE_ARGS
-		  -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
-	  )
-	endif()
+  if( WIN32 )
+    # Set paths to help find Ogre on Windows
+    set( PAGEDGEOMETRY_CMAKE_ARGS
+      -DOgre_INCLUDE_DIRS=${DEPENDENCIES_INCLUDE_DIR}/OGRE
+      -DOgre_LIBRARY_DIRS=${DEPENDENCIES_LIB_DIR}
+    )
+  elseif( UNIX )
+    # Set pkgconfig path to find Ogre on Linux
+    set( PAGEDGEOMETRY_CMAKE_ARGS
+      -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
+    )
+  endif()
 
-	ExternalProject_Add(
+  ExternalProject_Add(
     paged-geometry
     DEPENDS ogre
     GIT_REPOSITORY https://github.com/RigsOfRods/ogre-pagedgeometry.git
@@ -290,7 +289,7 @@ if( BUILD_PAGEDGEOMETRY )
     CMAKE_ARGS
       -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
       -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-	  ${PAGEDGEOMETRY_CMAKE_ARGS}
+      ${PAGEDGEOMETRY_CMAKE_ARGS}
       -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
@@ -309,14 +308,14 @@ if( BUILD_CAELUM )
   if( WIN32 )
     # Set paths to help find Ogre on Windows
     set( CAELUM_CMAKE_ARGS
-	  -DOgre_INCLUDE_DIRS=${DEPENDENCIES_INCLUDE_DIR}/OGRE
-	  -DOgre_LIBRARY_DIRS=${DEPENDENCIES_LIB_DIR}
-	  -DOgre_LIBRARIES=${DEPENDENCIES_LIB_DIR}/OgreMain
+      -DOgre_INCLUDE_DIRS=${DEPENDENCIES_INCLUDE_DIR}/OGRE
+      -DOgre_LIBRARY_DIRS=${DEPENDENCIES_LIB_DIR}
+      -DOgre_LIBRARIES=${DEPENDENCIES_LIB_DIR}/OgreMain
     )
   elseif( UNIX )
     # Set pkgconfig path on Linux
     set( CAELUM_CMAKE_ARGS
-        -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
+      -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
     )
   endif()
 
@@ -374,27 +373,27 @@ if( BUILD_ANGELSCRIPT )
   set( ANGELSCRIPT_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/angelscript )
 
   ExternalProject_Add(
-	angelscript-download
-	URL http://angelcode.com/angelscript/sdk/files/angelscript_2.22.1.zip
-    SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ""
+      angelscript-download
+      URL http://angelcode.com/angelscript/sdk/files/angelscript_2.22.1.zip
+      SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}
+      CONFIGURE_COMMAND ""
+      BUILD_COMMAND ""
+      INSTALL_COMMAND ""
   )
 
   ExternalProject_Add(
-	angelscript
-	DEPENDS angelscript-download
-	DOWNLOAD_COMMAND ""
-	PATCH_COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
-	COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
+    angelscript
+    DEPENDS angelscript-download
+    DOWNLOAD_COMMAND ""
+    PATCH_COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
+    COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
     SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake
-	BUILD_IN_SOURCE 1
+    BUILD_IN_SOURCE 1
     CMAKE_ARGS
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include ${DEPENDENCIES_INCLUDE_DIR}
-	COMMAND	${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/lib ${DEPENDENCIES_LIB_DIR}
+    COMMAND  ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/lib ${DEPENDENCIES_LIB_DIR}
   )
 
 endif()
@@ -410,25 +409,25 @@ if( WIN32 AND BUILD_MOFILEREADER )
   set( MOFILEREADER_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/mofilereader )
 
   ExternalProject_Add(
-	mofilereader-download
-	URL https://bitbucket.org/scorcher24/mofilereader/get/e86fcb882723.zip
+    mofilereader-download
+    URL https://bitbucket.org/scorcher24/mofilereader/get/e86fcb882723.zip
     SOURCE_DIR ${MOFILEREADER_SOURCE_DIR}
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
   )
 
   ExternalProject_Add(
-	mofilereader
-	DEPENDS mofilereader-download
-	DOWNLOAD_COMMAND ""
+    mofilereader
+    DEPENDS mofilereader-download
+    DOWNLOAD_COMMAND ""
     SOURCE_DIR ${MOFILEREADER_SOURCE_DIR}/build
-	BUILD_IN_SOURCE 1
+    BUILD_IN_SOURCE 1
     CMAKE_ARGS
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
-	COMMAND	${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/lib ${DEPENDENCIES_LIB_DIR}
+    COMMAND  ${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/lib ${DEPENDENCIES_LIB_DIR}
   )
 
 endif()
@@ -444,8 +443,7 @@ if( WIN32 AND BUILD_WXWIDGETS )
 
   ExternalProject_Add(
     wxwidgets
-    GIT_REPOSITORY https://github.com/TcT2k/wxWidgets/
-    GIT_TAG build_cmake
+    URL https://github.com/TcT2k/wxWidgets/archive/build_cmake.tar.gz
     UPDATE_COMMAND ""
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
@@ -453,9 +451,9 @@ if( WIN32 AND BUILD_WXWIDGETS )
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
   )
   ExternalProject_Add_Step(
-	wxwidgets copy_dll_to_bin
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCIES_OUTPUT_DIR}/lib/vc_dll ${DEPENDENCIES_OUTPUT_DIR}/bin
-	DEPENDEES install
+    wxwidgets copy_dll_to_bin
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCIES_OUTPUT_DIR}/lib/vc_dll ${DEPENDENCIES_OUTPUT_DIR}/bin
+    DEPENDEES install
   )
 
 endif()
@@ -479,8 +477,8 @@ if( WIN32 AND BUILD_CRASHRPT )
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_BUILD_DIR}/bin ${DEPENDENCIES_BIN_DIR}
-    COMMAND	${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_SOURCE_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
-    COMMAND	${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_BUILD_DIR}/lib ${DEPENDENCIES_LIB_DIR}
+    COMMAND  ${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_SOURCE_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
+    COMMAND  ${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_BUILD_DIR}/lib ${DEPENDENCIES_LIB_DIR}
   )
 
 endif()
