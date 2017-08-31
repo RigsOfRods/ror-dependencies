@@ -380,7 +380,7 @@ if( BUILD_ANGELSCRIPT )
 
   ExternalProject_Add(
       angelscript-download
-      URL http://angelcode.com/angelscript/sdk/files/angelscript_2.22.1.zip
+      URL http://angelcode.com/angelscript/sdk/files/angelscript_2.31.2.zip
       SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
@@ -399,7 +399,7 @@ if( BUILD_ANGELSCRIPT )
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include ${DEPENDENCIES_INCLUDE_DIR}
-    COMMAND  ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/lib ${DEPENDENCIES_LIB_DIR}
+    COMMAND  ${CMAKE_COMMAND} -E copy ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake/Release/angelscript.lib ${DEPENDENCIES_LIB_DIR}/angelscript.lib
   )
 
 endif()
