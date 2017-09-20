@@ -390,20 +390,38 @@ if( BUILD_ANGELSCRIPT )
       INSTALL_COMMAND ""
   )
 
-  ExternalProject_Add(
-    angelscript
-    DEPENDS angelscript-download
-    DOWNLOAD_COMMAND ""
-    PATCH_COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
-    COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
-    SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake
-    BUILD_IN_SOURCE 1
-    CMAKE_ARGS
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-      -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include ${DEPENDENCIES_INCLUDE_DIR}
-    COMMAND  ${CMAKE_COMMAND} -E copy ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake/Release/angelscript.lib ${DEPENDENCIES_LIB_DIR}/angelscript.lib
-  )
+  if( WIN32 )
+    ExternalProject_Add(
+      angelscript
+      DEPENDS angelscript-download
+      DOWNLOAD_COMMAND ""
+      PATCH_COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
+      COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
+      SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake
+      BUILD_IN_SOURCE 1
+      CMAKE_ARGS
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+      INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include ${DEPENDENCIES_INCLUDE_DIR}
+      COMMAND  ${CMAKE_COMMAND} -E copy ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake/Release/angelscript.lib ${DEPENDENCIES_LIB_DIR}/angelscript.lib
+    )
+  else()
+    ExternalProject_Add(
+        angelscript
+        DEPENDS angelscript-download
+        DOWNLOAD_COMMAND ""
+        PATCH_COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
+        COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
+        SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake
+        BUILD_IN_SOURCE 1
+        CMAKE_ARGS
+          -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+          -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include ${DEPENDENCIES_INCLUDE_DIR}
+        COMMAND  ${CMAKE_COMMAND} -E copy ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake/libangelscript.a ${DEPENDENCIES_LIB_DIR}/libangelscript.a
+      )
+
+  endif()
 
 endif()
 
