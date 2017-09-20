@@ -3,7 +3,7 @@ Dependencies that will be needed to compile the source.
 
 |  Build status 	|                                                                                                                                                                                     	|
 |---------------	|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
-| Linux:        	| TODO                                                                                                                                                                                	|
+| Linux:        	| [![Build Status](https://img.shields.io/travis/RigsOfRods/ror-dependencies.svg?style=flat-square)](https://travis-ci.org/RigsOfRods/ror-dependencies)                                                                                                                                                                                	|
 | Windows:      	| [![appveyor build Status](https://img.shields.io/appveyor/ci/AnotherFoxGuy/ror-dependencies.svg?style=flat-square)](https://ci.appveyor.com/project/AnotherFoxGuy/ror-dependencies) 	|
 
 ## How to build on Windows
