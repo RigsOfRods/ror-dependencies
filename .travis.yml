@@ -1,0 +1,7 @@
+sudo: required
+language: C
+
+script:
+  - sudo apt-get update -qq && sudo apt-get install libxrandr-dev -y
+  - cmake .
+  - make -j2
