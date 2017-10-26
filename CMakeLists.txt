@@ -42,9 +42,9 @@ option(BUILD_MYGUI "Build MyGUI graphical UI library" ON)
 option(BUILD_OPENAL "Build OpenAL audio library" ON)
 option(BUILD_ANGELSCRIPT "Build AngelScript scripting library" ON)
 option(BUILD_SOCKETW "Build SocketW networking library" ON)
-option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
 option(BUILD_PAGEDGEOMETRY "Build PagedGeometry library" ON)
 option(BUILD_CAELUM "Build Caelum library" ON)
+option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
 
 # Options with different default values on Windows and Linux
 include(CMakeDependentOption)
@@ -288,13 +288,12 @@ if (BUILD_PAGEDGEOMETRY)
             paged-geometry
             DEPENDS ogre
             GIT_REPOSITORY https://github.com/RigsOfRods/ogre-pagedgeometry.git
-            GIT_TAG v1.2.0
             UPDATE_COMMAND ""
             CMAKE_ARGS
-            -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
+            -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
+            -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             ${PAGEDGEOMETRY_CMAKE_ARGS}
-            -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
     )
@@ -328,17 +327,24 @@ if (BUILD_CAELUM)
             GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum.git
             UPDATE_COMMAND ""
             CMAKE_ARGS
-            -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
+            -DCaelum_BUILD_SAMPLES=FALSE
+            -DINSTALL_OGRE_PLUGIN=OFF
+            -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             ${CAELUM_CMAKE_ARGS}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+
     )
-    ExternalProject_Add_Step(
-            caelum patch_pluginscfg
-            COMMAND ${CMAKE_COMMAND} -E echo Plugin=Caelum >> ${DEPENDENCIES_BIN_DIR}/release/plugins.cfg
-            DEPENDEES install
-    )
+
+    if (WIN32)
+        ExternalProject_Add_Step(
+                caelum patch_pluginscfg
+                COMMAND ${CMAKE_COMMAND} -E echo Plugin=Caelum >> ${DEPENDENCIES_BIN_DIR}/release/plugins.cfg
+                DEPENDEES install
+        )
+    endif ()
+
 endif ()
 
 
@@ -374,46 +380,14 @@ if (BUILD_ANGELSCRIPT)
     set(ANGELSCRIPT_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/angelscript)
 
     ExternalProject_Add(
-            angelscript-download
-            URL http://angelcode.com/angelscript/sdk/files/angelscript_2.31.2.zip
-            SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ""
-            INSTALL_COMMAND ""
+            angelscript
+            GIT_REPOSITORY https://github.com/AnotherFoxGuy/angelscript.git
+            UPDATE_COMMAND ""
+            CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
     )
-
-    if (WIN32)
-        ExternalProject_Add(
-                angelscript
-                DEPENDS angelscript-download
-                DOWNLOAD_COMMAND ""
-                PATCH_COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
-                COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
-                SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake
-                BUILD_IN_SOURCE 1
-                CMAKE_ARGS
-                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-                INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include ${DEPENDENCIES_INCLUDE_DIR}
-                COMMAND ${CMAKE_COMMAND} -E copy ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake/Release/angelscript.lib ${DEPENDENCIES_LIB_DIR}/angelscript.lib
-        )
-    else ()
-        ExternalProject_Add(
-                angelscript
-                DEPENDS angelscript-download
-                DOWNLOAD_COMMAND ""
-                PATCH_COMMAND ${CMAKE_COMMAND} -E echo "// Rigs of Rods hack to fix physics engine" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
-                COMMAND ${CMAKE_COMMAND} -E echo "#define CLEAR_FPU_STACK emms" >> ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include/angelscript.h
-                SOURCE_DIR ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake
-                BUILD_IN_SOURCE 1
-                CMAKE_ARGS
-                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-                INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${ANGELSCRIPT_SOURCE_DIR}/angelscript/include ${DEPENDENCIES_INCLUDE_DIR}
-                COMMAND ${CMAKE_COMMAND} -E copy ${ANGELSCRIPT_SOURCE_DIR}/angelscript/projects/cmake/libangelscript.a ${DEPENDENCIES_LIB_DIR}/libangelscript.a
-        )
-
-    endif ()
 
 endif ()
 
