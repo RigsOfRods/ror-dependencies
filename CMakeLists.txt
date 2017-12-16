@@ -434,7 +434,7 @@ if (WIN32 AND BUILD_WXWIDGETS)
 
     ExternalProject_Add(
             wxwidgets
-            URL https://github.com/wxWidgets/wxWidgets/archive/master.tar.gz
+            GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
             UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
