@@ -435,9 +435,12 @@ if (WIN32 AND BUILD_WXWIDGETS)
     ExternalProject_Add(
             wxwidgets
             GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
+            GIT_TAG v3.1.1
             UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+            -DwxBUILD_MSVC_MULTIPROC=ON
+            -DwxBUILD_VENDOR=RoR
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
     )
