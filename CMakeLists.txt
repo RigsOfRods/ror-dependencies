@@ -110,6 +110,27 @@ if (UNIX)
 endif ()
 
 
+
+# ------------------------------------------------------------------------------------------------#
+#  OpenAL
+# ------------------------------------------------------------------------------------------------#
+
+if (BUILD_OPENAL)
+
+    ExternalProject_Add(
+            openal
+            GIT_REPOSITORY https://github.com/kcat/openal-soft
+            # GIT_TAG openal-soft-1.18.2 #TODO update when new version is released
+            CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+    )
+
+endif ()
+
+
+
 # ------------------------------------------------------------------------------------------------#
 #  cURL
 # ------------------------------------------------------------------------------------------------#
@@ -184,7 +205,7 @@ if (BUILD_OGRE)
 
     ExternalProject_Add(
             ogre
-            DEPENDS ogredeps
+            DEPENDS ogredeps openal
             URL https://github.com/OGRECave/ogre/archive/v1.9.1.zip
             PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreTerrain.cpp ${CMAKE_BINARY_DIR}/Source/ogre/Components/Terrain/src/OgreTerrain.cpp  # Fix stackoverflow on terrain load (PR #336)
             COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreD3D9Prerequisites.h ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/include/OgreD3D9Prerequisites.h # workaround for VS2015
@@ -238,26 +259,6 @@ if (BUILD_MYGUI)
     )
 
 endif ()
-
-
-# ------------------------------------------------------------------------------------------------#
-#  OpenAL
-# ------------------------------------------------------------------------------------------------#
-
-if (BUILD_OPENAL)
-
-    ExternalProject_Add(
-            openal
-            GIT_REPOSITORY https://github.com/kcat/openal-soft
-            GIT_TAG openal-soft-1.17.1
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-    )
-
-endif ()
-
 
 # ------------------------------------------------------------------------------------------------#
 #  PagedGeometry
