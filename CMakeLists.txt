@@ -29,7 +29,7 @@ cmake_minimum_required(VERSION 3.2)
 # the ExternalProject module of CMake to build the individual dependencies.
 # ------------------------------------------------------------------------------------------------#
 
-project(ror-dependencies VERSION 27)
+project(ror-dependencies VERSION 30)
 
 
 # ------------------------------------------------------------------------------------------------#
@@ -120,7 +120,6 @@ if (BUILD_CURL)
             curl
             GIT_REPOSITORY https://github.com/bagder/curl.git
             GIT_TAG curl-7_46_0
-            UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DBUILD_CURL_TESTS=OFF
@@ -140,7 +139,6 @@ if (BUILD_RAPIDJSON)
     ExternalProject_Add(
             RapidJSON
             GIT_REPOSITORY https://github.com/miloyip/rapidjson
-            UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DINCLUDE_INSTALL_DIR=${DEPENDENCIES_OUTPUT_DIR}/include # rapidjson will add "rapidjson" subdirectory
@@ -188,7 +186,6 @@ if (BUILD_OGRE)
             ogre
             DEPENDS ogredeps
             URL https://github.com/OGRECave/ogre/archive/v1.9.1.zip
-            UPDATE_COMMAND ""
             PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreTerrain.cpp ${CMAKE_BINARY_DIR}/Source/ogre/Components/Terrain/src/OgreTerrain.cpp  # Fix stackoverflow on terrain load (PR #336)
             COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreD3D9Prerequisites.h ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/include/OgreD3D9Prerequisites.h # workaround for VS2015
             COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/Ogre_RenderSystem_Direct3D9_CMakeLists.txt ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/CMakeLists.txt # To include bundled DirectX-SDK files
@@ -223,7 +220,6 @@ if (BUILD_MYGUI)
             mygui
             DEPENDS ogre
             URL https://github.com/MyGUI/mygui/archive/master.tar.gz
-            UPDATE_COMMAND ""
             CMAKE_ARGS
             -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
             -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
@@ -254,7 +250,6 @@ if (BUILD_OPENAL)
             openal
             GIT_REPOSITORY https://github.com/kcat/openal-soft
             GIT_TAG openal-soft-1.17.1
-            UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -288,7 +283,6 @@ if (BUILD_PAGEDGEOMETRY)
             paged-geometry
             DEPENDS ogre
             GIT_REPOSITORY https://github.com/RigsOfRods/ogre-pagedgeometry.git
-            UPDATE_COMMAND ""
             CMAKE_ARGS
             -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}
@@ -325,7 +319,6 @@ if (BUILD_CAELUM)
             caelum
             DEPENDS ogre
             GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum.git
-            UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCaelum_BUILD_SAMPLES=FALSE
             -DINSTALL_OGRE_PLUGIN=OFF
@@ -359,7 +352,6 @@ if (BUILD_SOCKETW)
     ExternalProject_Add(
             socketw
             GIT_REPOSITORY https://github.com/RigsOfRods/socketw.git
-            UPDATE_COMMAND ""
             PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/sw_config.h ${SOCKETW_SOURCE_DIR}/src/sw_config.h
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
@@ -382,7 +374,6 @@ if (BUILD_ANGELSCRIPT)
     ExternalProject_Add(
             angelscript
             GIT_REPOSITORY https://github.com/AnotherFoxGuy/angelscript.git
-            UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -436,7 +427,6 @@ if (WIN32 AND BUILD_WXWIDGETS)
             wxwidgets
             GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
             GIT_TAG v3.1.1
-            UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DwxBUILD_MSVC_MULTIPROC=ON
@@ -465,7 +455,6 @@ if (WIN32 AND BUILD_CRASHRPT)
     ExternalProject_Add(
             CrashRpt
             GIT_REPOSITORY https://github.com/Outerra/crashrpt/
-            UPDATE_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
