@@ -185,11 +185,13 @@ if (BUILD_OGRE)
     # First build the required dependencies for Ogre itself. They are provided in a dedicated repository.
     ExternalProject_Add(
             ogredeps
-            URL https://bitbucket.org/cabalistic/ogredeps/get/7168c50f9d04.zip
+            URL https://bitbucket.org/cabalistic/ogredeps/get/default.zip
             CMAKE_ARGS
-            -DOGREDEPS_BUILD_SDL2=OFF
             -DOGREDEPS_BUILD_AMD_QBS=OFF
             -DOGREDEPS_BUILD_NVIDIA_NVAPI=OFF
+            -DOGREDEPS_BUILD_RAPIDJSON=OFF
+            -DOGREDEPS_BUILD_REOTERY=OFF
+            -DOGREDEPS_BUILD_SDL2=OFF
             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/OgreDependencies
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
     )
