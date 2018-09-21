@@ -242,7 +242,8 @@ if (BUILD_MYGUI)
     ExternalProject_Add(
             mygui
             DEPENDS ogre
-            URL https://github.com/MyGUI/mygui/archive/master.tar.gz
+            GIT_REPOSITORY https://github.com/MyGUI/mygui
+            GIT_TAG cf86abc685179017859f52f223468d10f8e0442c
             CMAKE_ARGS
             -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
             -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
