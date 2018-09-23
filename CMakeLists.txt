@@ -110,7 +110,6 @@ if (UNIX)
 endif ()
 
 
-
 # ------------------------------------------------------------------------------------------------#
 #  OpenAL
 # ------------------------------------------------------------------------------------------------#
@@ -119,16 +118,19 @@ if (BUILD_OPENAL)
 
     ExternalProject_Add(
             openal
-            GIT_REPOSITORY https://github.com/kcat/openal-soft
+            GIT_REPOSITORY https://github.com/kcat/openal-soft.git
             # GIT_TAG openal-soft-1.18.2 #TODO update when new version is released
+            GIT_SHALLOW TRUE
+            GIT_PROGRESS TRUE
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
 
 endif ()
-
 
 
 # ------------------------------------------------------------------------------------------------#
@@ -141,22 +143,25 @@ if (BUILD_CURL)
             curl
             GIT_REPOSITORY https://github.com/bagder/curl.git
             GIT_TAG curl-7_46_0
+            GIT_SHALLOW TRUE
+            GIT_PROGRESS TRUE
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DBUILD_CURL_TESTS=OFF
             -DCMAKE_USE_OPENSSL=OFF
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
 
 endif ()
 
+
 # ------------------------------------------------------------------------------------------------#
 #  RapidJSON
 # ------------------------------------------------------------------------------------------------#
-
 if (BUILD_RAPIDJSON)
-
     ExternalProject_Add(
             RapidJSON
             GIT_REPOSITORY https://github.com/miloyip/rapidjson
@@ -169,18 +174,18 @@ if (BUILD_RAPIDJSON)
             -DRAPIDJSON_BUILD_THIRDPARTY_GTEST=NO
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
-
 endif ()
-
 
 # ------------------------------------------------------------------------------------------------#
 #  Ogre3D
 # ------------------------------------------------------------------------------------------------#
-# Patching is needed for the D3D9 plugin when compiling with VS2015.
-# See http://www.ogre3d.org/forums/viewtopic.php?f=2&t=84008
 
 if (BUILD_OGRE)
+
+    set(OGRE_VERSION v1.11.2)
 
     # First build the required dependencies for Ogre itself. They are provided in a dedicated repository.
     ExternalProject_Add(
@@ -192,43 +197,78 @@ if (BUILD_OGRE)
             -DOGREDEPS_BUILD_RAPIDJSON=OFF
             -DOGREDEPS_BUILD_REMOTERY=OFF
             -DOGREDEPS_BUILD_SDL2=OFF
-            -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/OgreDependencies
+            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
 
     if (WIN32)
+
         # By default the cg.dll is only installed in the build directory. Therefore manually copy it to the dependency output directory.
         ExternalProject_Add_Step(
                 ogredeps copy_cg_dll
                 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/Build/ogredeps/bin/Release/cg.dll ${DEPENDENCIES_BIN_DIR}/cg.dll
                 DEPENDEES build
         )
+
+        ExternalProject_Add(
+                ogre
+                DEPENDS ogredeps
+                GIT_REPOSITORY https://github.com/OGRECave/ogre.git
+                GIT_TAG ${OGRE_VERSION}
+                GIT_SHALLOW TRUE
+                GIT_PROGRESS TRUE
+                PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/Ogre_RenderSystem_Direct3D9_CMakeLists.txt ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/CMakeLists.txt # To include bundled DirectX-SDK files
+                CMAKE_ARGS
+                -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+                -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
+                -DFREETYPE_LIBRARY=${DEPENDENCIES_OUTPUT_DIR}/lib/Release/freetype.lib
+                -DZLIB_LIBRARY=${DEPENDENCIES_OUTPUT_DIR}/lib/Release/zlib.lib
+                -DOGRE_BUILD_SAMPLES=OFF
+                -DOGRE_BUILD_TOOLS=ON
+                -DOGRE_BUILD_COMPONENT_BITES=ON
+                -DOGRE_BUILD_COMPONENT_VOLUME=OFF
+                -DOGRE_BUILD_PLUGIN_BSP=OFF
+                -DOGRE_BUILD_PLUGIN_PCZ=OFF
+                -DOGRE_BUILD_RENDERSYSTEM_D3D9=ON
+                -DOGRE_BUILD_RENDERSYSTEM_D3D11=OFF  # TODO
+                -DOGRE_BUILD_RENDERSYSTEM_GL3PLUS=OFF
+                -DOGRE_RESOURCEMANAGER_STRICT=0
+                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+                -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                -DDirectX9_D3DX9_LIBRARY=${CMAKE_SOURCE_DIR}/win32-directx/lib/x86/d3dx9.lib  # Add bundled DirectX libs
+                -DDirectX9_DXERR_LIBRARY=${CMAKE_SOURCE_DIR}/win32-directx/lib/x86/DxErr.lib  # Add bundled DirectX libs
+                -DDirectX9_BUNDLED_INCLUDE_DIR=${CMAKE_SOURCE_DIR}/win32-directx/include      # Add bundled DirectX headers; requires modified CMakeLists.txt
+        )
+    else ()
+        ExternalProject_Add(
+                ogre
+                DEPENDS ogredeps
+                GIT_REPOSITORY https://github.com/OGRECave/ogre.git
+                GIT_TAG ${OGRE_VERSION}
+                GIT_SHALLOW TRUE
+                GIT_PROGRESS TRUE
+                CMAKE_ARGS
+                -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+                -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
+                -DOGRE_BUILD_SAMPLES=OFF
+                -DOGRE_BUILD_TOOLS=ON
+                -DOGRE_BUILD_COMPONENT_BITES=ON
+                -DOGRE_BUILD_COMPONENT_VOLUME=OFF
+                -DOGRE_BUILD_PLUGIN_BSP=OFF
+                -DOGRE_BUILD_PLUGIN_PCZ=OFF
+                -DOGRE_BUILD_RENDERSYSTEM_GL3PLUS=OFF
+                -DOGRE_RESOURCEMANAGER_STRICT=0
+                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+                -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+        )
     endif ()
 
-    ExternalProject_Add(
-            ogre
-            DEPENDS ogredeps openal
-            URL https://github.com/OGRECave/ogre/archive/v1.9.1.zip
-            PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreTerrain.cpp ${CMAKE_BINARY_DIR}/Source/ogre/Components/Terrain/src/OgreTerrain.cpp  # Fix stackoverflow on terrain load (PR #336)
-            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/OgreD3D9Prerequisites.h ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/include/OgreD3D9Prerequisites.h # workaround for VS2015
-            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/Ogre_RenderSystem_Direct3D9_CMakeLists.txt ${CMAKE_BINARY_DIR}/Source/ogre/RenderSystems/Direct3D9/CMakeLists.txt # To include bundled DirectX-SDK files
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DOGRE_DEPENDENCIES_DIR=${CMAKE_BINARY_DIR}/OgreDependencies
-            -DOGRE_BUILD_SAMPLES=OFF
-            -DOGRE_BUILD_TOOLS=OFF
-            -DOGRE_BUILD_COMPONENT_VOLUME=OFF
-            -DOGRE_BUILD_PLUGIN_BSP=OFF
-            -DOGRE_BUILD_PLUGIN_PCZ=OFF
-            -DOGRE_BUILD_RENDERSYSTEM_D3D9=ON
-            -DOGRE_BUILD_RENDERSYSTEM_D3D11=OFF  # TODO
-            -DOGRE_BUILD_RENDERSYSTEM_GL3PLUS=OFF
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DDirectX9_D3DX9_LIBRARY=${CMAKE_SOURCE_DIR}/win32-directx/lib/x86/d3dx9.lib  # Add bundled DirectX libs
-            -DDirectX9_DXERR_LIBRARY=${CMAKE_SOURCE_DIR}/win32-directx/lib/x86/DxErr.lib  # Add bundled DirectX libs
-            -DDirectX9_BUNDLED_INCLUDE_DIR=${CMAKE_SOURCE_DIR}/win32-directx/include      # Add bundled DirectX headers; requires modified CMakeLists.txt
-    )
 
 endif ()
 
@@ -242,22 +282,27 @@ if (BUILD_MYGUI)
     ExternalProject_Add(
             mygui
             DEPENDS ogre
-            URL https://github.com/MyGUI/mygui/archive/master.tar.gz
+            GIT_REPOSITORY https://github.com/MyGUI/mygui.git
+            GIT_TAG cf86abc685179017859f52f223468d10f8e0442c
+            GIT_SHALLOW TRUE
+            GIT_PROGRESS TRUE
             CMAKE_ARGS
             -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
             -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DMYGUI_DEPENDENCIES_DIR=${CMAKE_BINARY_DIR}/OgreDependencies
+            -DMYGUI_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
             -DOGRE_SOURCE_DIR=${CMAKE_BINARY_DIR}/Source/ogre
             -DOGRE_BUILD=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
             -DMYGUI_BUILD_DEMOS=OFF
             -DMYGUI_BUILD_DOCS=OFF
             -DMYGUI_BUILD_TEST_APP=OFF
-            -DMYGUI_BUILD_TOOLS=OFF
+            -DMYGUI_BUILD_TOOLS=ON
             -DMYGUI_BUILD_PLUGINS=NO
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
 
 endif ()
@@ -285,7 +330,7 @@ if (BUILD_PAGEDGEOMETRY)
     ExternalProject_Add(
             paged-geometry
             DEPENDS ogre
-            GIT_REPOSITORY https://github.com/RigsOfRods/ogre-pagedgeometry.git
+            GIT_REPOSITORY https://github.com/OGRECave/ogre-pagedgeometry
             CMAKE_ARGS
             -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}
@@ -321,7 +366,7 @@ if (BUILD_CAELUM)
     ExternalProject_Add(
             caelum
             DEPENDS ogre
-            GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum.git
+            GIT_REPOSITORY https://github.com/OGRECave/ogre-caelum
             CMAKE_ARGS
             -DCaelum_BUILD_SAMPLES=FALSE
             -DINSTALL_OGRE_PLUGIN=OFF
@@ -343,7 +388,6 @@ if (BUILD_CAELUM)
 
 endif ()
 
-
 # ------------------------------------------------------------------------------------------------#
 #  SocketW
 # ------------------------------------------------------------------------------------------------#
@@ -360,6 +404,8 @@ if (BUILD_SOCKETW)
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
 
 endif ()
@@ -381,6 +427,8 @@ if (BUILD_ANGELSCRIPT)
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
 
 endif ()
@@ -412,6 +460,8 @@ if (WIN32 AND BUILD_MOFILEREADER)
             CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
             INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/lib ${DEPENDENCIES_LIB_DIR}
     )
@@ -430,12 +480,16 @@ if (WIN32 AND BUILD_WXWIDGETS)
             wxwidgets
             GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
             GIT_TAG v3.1.1
+            GIT_SHALLOW TRUE
+            GIT_PROGRESS TRUE
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DwxBUILD_MSVC_MULTIPROC=ON
             -DwxBUILD_VENDOR=RoR
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
     ExternalProject_Add_Step(
             wxwidgets copy_dll_to_bin
@@ -457,11 +511,13 @@ if (WIN32 AND BUILD_CRASHRPT)
 
     ExternalProject_Add(
             CrashRpt
-            GIT_REPOSITORY https://github.com/Outerra/crashrpt/
+            GIT_REPOSITORY https://github.com/Outerra/crashrpt.git
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
             INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_BUILD_DIR}/bin ${DEPENDENCIES_BIN_DIR}
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_SOURCE_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${CRASHRPT_BUILD_DIR}/lib ${DEPENDENCIES_LIB_DIR}
