@@ -1,8 +1,9 @@
+dist: xenial
 sudo: required
 language: C
 
 before_install:
-  - sudo apt-get update -qq && sudo apt-get install libxrandr-dev -y
+  - sudo apt-get update -qq && sudo apt-get install libxrandr-dev libxaw7-dev -y
 script:
   - cmake .
   - make -j2
