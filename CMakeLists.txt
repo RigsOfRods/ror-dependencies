@@ -410,7 +410,7 @@ if (WIN32 AND BUILD_MOFILEREADER)
             mofilereader
             DEPENDS mofilereader-download
             DOWNLOAD_COMMAND ""
-            SOURCE_DIR ${MOFILEREADER_SOURCE_DIR}/build
+            SOURCE_DIR ${MOFILEREADER_SOURCE_DIR}
             BUILD_IN_SOURCE 1
             CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
