@@ -117,9 +117,6 @@ if (BUILD_OPENAL)
     ExternalProject_Add(
             openal
             GIT_REPOSITORY https://github.com/kcat/openal-soft.git
-            GIT_TAG openal-soft-1.18.2 #TODO update when new version is released
-            GIT_SHALLOW TRUE
-            GIT_PROGRESS TRUE
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
