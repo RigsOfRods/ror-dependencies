@@ -50,12 +50,6 @@ option(BUILD_MOFILEREADER "Build MofileReader" ON)
 include(CMakeDependentOption)
 cmake_dependent_option(BUILD_CURL "Build cURL library" ON WIN32 OFF)
 
-# Build options available for Windows only
-if (WIN32)
-    option(BUILD_WXWIDGETS "Build WxWidgets" ON)
-endif ()
-
-
 # ------------------------------------------------------------------------------------------------#
 # General setup and initialization
 # ------------------------------------------------------------------------------------------------#
@@ -439,36 +433,5 @@ if (BUILD_MOFILEREADER)
         )
 
      endif ()
-
-endif ()
-
-
-# ------------------------------------------------------------------------------------------------#
-#  WxWidgets
-# ------------------------------------------------------------------------------------------------#
-# For Linux WxWidgets should be installed using the distros package management.
-
-if (WIN32 AND BUILD_WXWIDGETS)
-
-    ExternalProject_Add(
-            wxwidgets
-            GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
-            GIT_TAG v3.1.1
-            GIT_SHALLOW TRUE
-            GIT_PROGRESS TRUE
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DwxBUILD_MSVC_MULTIPROC=ON
-            -DwxBUILD_VENDOR=RoR
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
-    ExternalProject_Add_Step(
-            wxwidgets copy_dll_to_bin
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${DEPENDENCIES_OUTPUT_DIR}/lib/vc_dll ${DEPENDENCIES_OUTPUT_DIR}/bin
-            DEPENDEES install
-    )
 
 endif ()

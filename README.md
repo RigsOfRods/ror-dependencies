@@ -35,7 +35,6 @@ Install with [Chocolatey](https://chocolatey.org/): ```choco install cmake git``
 ### Prerequisites
 
   * Install cmake, git
-  * Install WxWidgets
   
 ### Configure && build
 
