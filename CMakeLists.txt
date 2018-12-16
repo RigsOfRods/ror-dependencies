@@ -44,16 +44,11 @@ option(BUILD_ANGELSCRIPT "Build AngelScript scripting library" ON)
 option(BUILD_SOCKETW "Build SocketW networking library" ON)
 option(BUILD_CAELUM "Build Caelum library" ON)
 option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
+option(BUILD_MOFILEREADER "Build MofileReader" ON)
 
 # Options with different default values on Windows and Linux
 include(CMakeDependentOption)
 cmake_dependent_option(BUILD_CURL "Build cURL library" ON WIN32 OFF)
-
-# Build options available for Windows only
-if (WIN32)
-    option(BUILD_MOFILEREADER "Build MofileReader" ON)
-endif ()
-
 
 # ------------------------------------------------------------------------------------------------#
 # General setup and initialization
@@ -389,7 +384,7 @@ endif ()
 #  Mofilereader
 # ------------------------------------------------------------------------------------------------#
 
-if (WIN32 AND BUILD_MOFILEREADER)
+if (BUILD_MOFILEREADER)
 
     set(MOFILEREADER_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/mofilereader)
 
@@ -402,7 +397,9 @@ if (WIN32 AND BUILD_MOFILEREADER)
             INSTALL_COMMAND ""
     )
 
-    ExternalProject_Add(
+    if (WIN32)
+
+        ExternalProject_Add(
             mofilereader
             DEPENDS mofilereader-download
             DOWNLOAD_COMMAND ""
@@ -415,6 +412,26 @@ if (WIN32 AND BUILD_MOFILEREADER)
             -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
             INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/${CMAKE_BUILD_TYPE} ${DEPENDENCIES_LIB_DIR}
-    )
+        )
+
+    else ()
+ 
+       ExternalProject_Add(
+            mofilereader
+            DEPENDS mofilereader-download
+            DOWNLOAD_COMMAND ""
+            SOURCE_DIR ${MOFILEREADER_SOURCE_DIR}
+            BUILD_IN_SOURCE 1
+            CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+            INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy ${MOFILEREADER_SOURCE_DIR}/libmoFileReader.a ${DEPENDENCIES_OUTPUT_DIR}/lib
+            COMMAND ${CMAKE_COMMAND} -E copy ${MOFILEREADER_SOURCE_DIR}/moReader ${DEPENDENCIES_OUTPUT_DIR}/bin
+        )
+
+     endif ()
 
 endif ()
