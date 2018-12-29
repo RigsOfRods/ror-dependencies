@@ -111,6 +111,7 @@ if (BUILD_OPENAL)
     ExternalProject_Add(
             openal
             GIT_REPOSITORY https://github.com/kcat/openal-soft.git
+            GIT_TAG 0f3645902886b52102ffec51636c2fd8f1e7c3c5
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
