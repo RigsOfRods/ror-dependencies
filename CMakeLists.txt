@@ -203,6 +203,7 @@ if (BUILD_OGRE)
                 ogre
                 DEPENDS ogredeps
                 GIT_REPOSITORY https://github.com/OGRECave/ogre.git
+                GIT_TAG ab844b613fd5c58f516bb056552a45f0e7ae7c48
                 GIT_SHALLOW TRUE
                 GIT_PROGRESS TRUE
                 CMAKE_ARGS
@@ -233,6 +234,7 @@ if (BUILD_OGRE)
                 ogre
                 DEPENDS ogredeps
                 GIT_REPOSITORY https://github.com/OGRECave/ogre.git
+                GIT_TAG ab844b613fd5c58f516bb056552a45f0e7ae7c48
                 CMAKE_ARGS
                 -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
                 -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
