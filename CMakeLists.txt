@@ -203,7 +203,6 @@ if (BUILD_OGRE)
                 ogre
                 DEPENDS ogredeps
                 GIT_REPOSITORY https://github.com/OGRECave/ogre.git
-                PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/patches/scriptlexer.patch
                 GIT_SHALLOW TRUE
                 GIT_PROGRESS TRUE
                 CMAKE_ARGS
@@ -234,7 +233,6 @@ if (BUILD_OGRE)
                 ogre
                 DEPENDS ogredeps
                 GIT_REPOSITORY https://github.com/OGRECave/ogre.git
-                PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/patches/scriptlexer.patch
                 CMAKE_ARGS
                 -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
                 -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
