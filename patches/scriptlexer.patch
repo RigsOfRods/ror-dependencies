@@ -1,0 +1,13 @@
+diff --git a/OgreMain/src/OgreScriptLexer.cpp b/OgreMain/src/OgreScriptLexer.cpp
+index e3aaf7c09..3fd82d64f 100644
+--- a/OgreMain/src/OgreScriptLexer.cpp
++++ b/OgreMain/src/OgreScriptLexer.cpp
+@@ -79,7 +79,7 @@ namespace Ogre {
+                         error = StringUtil::format(
+                             "no matching open bracket '{' found for close bracket '}' at %s:%d", source,
+                             line);
+-                        return tokens;
++                        braceLayer = 1;
+                     }
+ 
+                     braceLayer --;
