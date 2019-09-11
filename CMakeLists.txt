@@ -202,8 +202,8 @@ if (BUILD_OGRE)
         ExternalProject_Add(
                 ogre
                 DEPENDS ogredeps
-                GIT_REPOSITORY https://github.com/OGRECave/ogre.git
-                GIT_TAG v1.11.6
+                GIT_REPOSITORY https://github.com/only-a-ptr/ogre.git
+                GIT_TAG v1.11.6-with-patches
                 PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/patches/scriptlexer.patch
                 CMAKE_ARGS
                 -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
@@ -418,7 +418,7 @@ if (BUILD_MOFILEREADER)
         )
 
     else ()
- 
+
        ExternalProject_Add(
             mofilereader
             DEPENDS mofilereader-download
