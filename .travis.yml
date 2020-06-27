@@ -1,9 +1,11 @@
-dist: xenial
-sudo: required
-language: C
+dist: bionic
+language: c++
 
-before_install:
-  - sudo apt-get update -qq && sudo apt-get install libxrandr-dev libxaw7-dev -y
+addons:
+  apt:
+    packages:
+      - libxrandr-dev
+      - libxaw7-dev
 script:
   - cmake .
   - make -j2
