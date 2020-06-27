@@ -208,8 +208,8 @@ if (BUILD_OGRE)
                 CMAKE_ARGS
                 -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
                 -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
-                -DFREETYPE_LIBRARY=${DEPENDENCIES_OUTPUT_DIR}/lib/Release/freetype.lib
-                -DZLIB_LIBRARY=${DEPENDENCIES_OUTPUT_DIR}/lib/Release/zlib.lib
+                -DFREETYPE_LIBRARY=${DEPENDENCIES_OUTPUT_DIR}/lib/${CMAKE_BUILD_TYPE}/freetype.lib
+                -DZLIB_LIBRARY=${DEPENDENCIES_OUTPUT_DIR}/lib/${CMAKE_BUILD_TYPE}/zlib.lib
                 -DOGRE_BUILD_SAMPLES=OFF
                 -DOGRE_BUILD_TOOLS=ON
                 -DOGRE_BUILD_COMPONENT_BITES=ON

@@ -1,5 +1,6 @@
 .idea
 _build
+build
 build_x86
 build_x64
 cmake-build-debug
