@@ -177,7 +177,9 @@ if (BUILD_OGRE)
     # First build the required dependencies for Ogre itself. They are provided in a dedicated repository.
     ExternalProject_Add(
             ogredeps
-            URL https://bitbucket.org/cabalistic/ogredeps/get/default.zip
+            GIT_REPOSITORY https://github.com/AnotherFoxGuy/ogredeps.git
+            GIT_SHALLOW TRUE
+            GIT_PROGRESS TRUE
             CMAKE_ARGS
             -DOGREDEPS_BUILD_AMD_QBS=OFF
             -DOGREDEPS_BUILD_NVIDIA_NVAPI=OFF
