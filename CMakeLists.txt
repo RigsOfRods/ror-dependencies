@@ -206,6 +206,7 @@ if (BUILD_OGRE)
                 DEPENDS ogredeps
                 GIT_REPOSITORY https://github.com/only-a-ptr/ogre.git
                 GIT_TAG v1.11.6-with-patches
+                GIT_PROGRESS TRUE
                 PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/patches/scriptlexer.patch
                 CMAKE_ARGS
                 -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
@@ -236,6 +237,7 @@ if (BUILD_OGRE)
                 DEPENDS ogredeps
                 GIT_REPOSITORY https://github.com/OGRECave/ogre.git
                 GIT_TAG v1.11.6
+                GIT_PROGRESS TRUE
                 PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/patches/scriptlexer.patch
                 CMAKE_ARGS
                 -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
@@ -269,7 +271,8 @@ if (BUILD_MYGUI)
             mygui
             DEPENDS ogre
             GIT_REPOSITORY https://github.com/MyGUI/mygui.git
-            GIT_TAG 07da0620e0d835346452b02b7b1ba7c583429736
+            GIT_TAG MyGUI3.4.0
+            GIT_PROGRESS TRUE
             CMAKE_ARGS
             -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
             -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
