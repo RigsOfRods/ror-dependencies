@@ -455,7 +455,7 @@ if (BUILD_FMT)
     ExternalProject_Add(
             fmt-download
             GIT_REPOSITORY https://github.com/fmtlib/fmt
-            GIT_TAG 7bdf0628b1276379886c7f6dda2cef2b3b374f0b
+            GIT_TAG 7.1.3
             SOURCE_DIR ${FMT_SOURCE_DIR}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
