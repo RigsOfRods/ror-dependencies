@@ -45,6 +45,7 @@ option(BUILD_SOCKETW "Build SocketW networking library" ON)
 option(BUILD_CAELUM "Build Caelum library" ON)
 option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
 option(BUILD_MOFILEREADER "Build MofileReader" ON)
+option(BUILD_FMT "Build fmt" ON)
 
 # Options with different default values on Windows and Linux
 include(CMakeDependentOption)
@@ -436,8 +437,59 @@ if (BUILD_MOFILEREADER)
             -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
             -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
             INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOFILEREADER_SOURCE_DIR}/include ${DEPENDENCIES_INCLUDE_DIR}
-            COMMAND ${CMAKE_COMMAND} -E copy ${MOFILEREADER_SOURCE_DIR}/libmoFileReader.a ${DEPENDENCIES_OUTPUT_DIR}/lib
             COMMAND ${CMAKE_COMMAND} -E copy ${MOFILEREADER_SOURCE_DIR}/moReader ${DEPENDENCIES_OUTPUT_DIR}/bin
+        )
+
+     endif ()
+
+endif ()
+
+# ------------------------------------------------------------------------------------------------#
+#  fmt
+# ------------------------------------------------------------------------------------------------#
+
+if (BUILD_FMT)
+
+    set(FMT_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/fmt)
+
+    ExternalProject_Add(
+            fmt-download
+            GIT_REPOSITORY https://github.com/fmtlib/fmt
+            GIT_TAG 7bdf0628b1276379886c7f6dda2cef2b3b374f0b
+            SOURCE_DIR ${FMT_SOURCE_DIR}
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+            INSTALL_COMMAND ""
+    )
+
+    if (WIN32)
+
+        ExternalProject_Add(
+            fmt
+            DEPENDS fmt-download
+            DOWNLOAD_COMMAND ""
+            BUILD_IN_SOURCE 1
+            CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+        )
+
+    else ()
+
+       ExternalProject_Add(
+            fmt
+            DEPENDS fmt-download
+            DOWNLOAD_COMMAND ""
+            BUILD_IN_SOURCE 1
+            CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         )
 
      endif ()
