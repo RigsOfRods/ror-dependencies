@@ -45,6 +45,7 @@ option(BUILD_SOCKETW "Build SocketW networking library" ON)
 option(BUILD_CAELUM "Build Caelum library" ON)
 option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
 option(BUILD_FMT "Build fmt" ON)
+option(BUILD_EFSW "Build EFSW (Entropia File System Watcher)" ON)
 
 # Options with different default values on Windows and Linux
 include(CMakeDependentOption)
@@ -436,5 +437,25 @@ if (BUILD_FMT)
         )
 
      endif ()
+
+endif ()
+
+# ------------------------------------------------------------------------------------------------#
+#  EFSW (Entropia File System Watcher)
+# ------------------------------------------------------------------------------------------------#
+
+if (BUILD_EFSW)
+
+    ExternalProject_Add(
+            efsw
+            GIT_REPOSITORY https://github.com/SpartanJ/efsw
+            GIT_TAG 1.1.0
+            CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+    )
 
 endif ()
