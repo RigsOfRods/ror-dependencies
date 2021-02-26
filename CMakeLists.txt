@@ -45,6 +45,7 @@ option(BUILD_SOCKETW "Build SocketW networking library" ON)
 option(BUILD_CAELUM "Build Caelum library" ON)
 option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
 option(BUILD_FMT "Build fmt" ON)
+option(BUILD_EFSW "Build efsw" ON)
 
 # Options with different default values on Windows and Linux
 include(CMakeDependentOption)
@@ -425,6 +426,58 @@ if (BUILD_FMT)
        ExternalProject_Add(
             fmt
             DEPENDS fmt-download
+            DOWNLOAD_COMMAND ""
+            BUILD_IN_SOURCE 1
+            CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+        )
+
+     endif ()
+
+endif ()
+
+# ------------------------------------------------------------------------------------------------#
+#  fmt
+# ------------------------------------------------------------------------------------------------#
+
+if (BUILD_EFSW)
+
+    set(EFSW_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/efsw)
+
+    ExternalProject_Add(
+            efsw-download
+            GIT_REPOSITORY https://github.com/SpartanJ/efsw
+            GIT_TAG 1.1.0
+            SOURCE_DIR ${EFSW_SOURCE_DIR}
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+            INSTALL_COMMAND ""
+    )
+
+    if (WIN32)
+
+        ExternalProject_Add(
+            efsw
+            DEPENDS efsw-download
+            DOWNLOAD_COMMAND ""
+            BUILD_IN_SOURCE 1
+            CMAKE_ARGS
+            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+        )
+
+    else ()
+
+       ExternalProject_Add(
+            efsw
+            DEPENDS efsw-download
             DOWNLOAD_COMMAND ""
             BUILD_IN_SOURCE 1
             CMAKE_ARGS
