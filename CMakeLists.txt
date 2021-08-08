@@ -111,6 +111,9 @@ if (BUILD_OPENAL)
     ExternalProject_Add(
             openal
             GIT_REPOSITORY https://github.com/kcat/openal-soft.git
+            GIT_TAG 1.21.1
+            GIT_SHALLOW TRUE
+            GIT_PROGRESS TRUE
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -130,8 +133,8 @@ if (BUILD_CURL)
 
     ExternalProject_Add(
             curl
-            GIT_REPOSITORY https://github.com/bagder/curl.git
-            GIT_TAG curl-7_46_0
+            GIT_REPOSITORY https://github.com/curl/curl.git
+            GIT_TAG curl-7_78_0
             GIT_SHALLOW TRUE
             GIT_PROGRESS TRUE
             CMAKE_ARGS
@@ -153,7 +156,7 @@ endif ()
 if (BUILD_RAPIDJSON)
     ExternalProject_Add(
             RapidJSON
-            GIT_REPOSITORY https://github.com/miloyip/rapidjson
+            GIT_REPOSITORY https://github.com/Tencent/rapidjson
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DINCLUDE_INSTALL_DIR=${DEPENDENCIES_OUTPUT_DIR}/include # rapidjson will add "rapidjson" subdirectory
@@ -396,45 +399,17 @@ if (BUILD_FMT)
     set(FMT_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/fmt)
 
     ExternalProject_Add(
-            fmt-download
-            GIT_REPOSITORY https://github.com/fmtlib/fmt
-            GIT_TAG 7.1.3
-            SOURCE_DIR ${FMT_SOURCE_DIR}
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ""
-            INSTALL_COMMAND ""
+        fmt
+        GIT_REPOSITORY https://github.com/fmtlib/fmt
+        GIT_TAG 8.0.1
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+        CMAKE_ARGS
+        -DFMT_TEST=OFF
+        -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
     )
-
-    if (WIN32)
-
-        ExternalProject_Add(
-            fmt
-            DEPENDS fmt-download
-            DOWNLOAD_COMMAND ""
-            BUILD_IN_SOURCE 1
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-        )
-
-    else ()
-
-       ExternalProject_Add(
-            fmt
-            DEPENDS fmt-download
-            DOWNLOAD_COMMAND ""
-            BUILD_IN_SOURCE 1
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-        )
-
-     endif ()
-
 endif ()
