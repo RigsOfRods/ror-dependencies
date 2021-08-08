@@ -42,6 +42,7 @@ option(BUILD_MYGUI "Build MyGUI graphical UI library" ON)
 option(BUILD_OPENAL "Build OpenAL audio library" ON)
 option(BUILD_ANGELSCRIPT "Build AngelScript scripting library" ON)
 option(BUILD_SOCKETW "Build SocketW networking library" ON)
+option(BUILD_PAGEDGEOMETRY "Build PagedGeometry library" ON)
 option(BUILD_CAELUM "Build Caelum library" ON)
 option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
 option(BUILD_FMT "Build fmt" ON)
@@ -90,6 +91,7 @@ if (MSVC)
 endif ()
 
 if (UNIX)
+    set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wno-deprecated-declarations -Wno-attributes")
 endif ()
 
@@ -290,6 +292,42 @@ if (BUILD_MYGUI)
             -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
             -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
             -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+    )
+
+endif ()
+
+
+# ------------------------------------------------------------------------------------------------#
+#  PagedGeometry
+# ------------------------------------------------------------------------------------------------#
+
+
+if (BUILD_PAGEDGEOMETRY)
+
+    if (WIN32)
+        # Set paths to help find Ogre on Windows
+        set(PAGEDGEOMETRY_CMAKE_ARGS
+                -DOgre_INCLUDE_DIRS=${DEPENDENCIES_INCLUDE_DIR}/OGRE
+                -DOgre_LIBRARY_DIRS=${DEPENDENCIES_LIB_DIR}
+                )
+    elseif (UNIX)
+        # Set pkgconfig path to find Ogre on Linux
+        set(PAGEDGEOMETRY_CMAKE_ARGS
+                -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
+                )
+    endif ()
+
+    ExternalProject_Add(
+            paged-geometry
+            DEPENDS ogre
+            GIT_REPOSITORY https://github.com/RigsOfRods/ogre-pagedgeometry.git
+            CMAKE_ARGS
+            -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
+            -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}
+            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+            ${PAGEDGEOMETRY_CMAKE_ARGS}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
     )
 
 endif ()
