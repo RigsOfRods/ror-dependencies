@@ -113,7 +113,6 @@ if (BUILD_OPENAL)
     ExternalProject_Add(
             openal
             GIT_REPOSITORY https://github.com/kcat/openal-soft.git
-            GIT_TAG 1.21.1
             GIT_SHALLOW TRUE
             GIT_PROGRESS TRUE
             CMAKE_ARGS
