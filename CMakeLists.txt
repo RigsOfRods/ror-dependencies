@@ -417,7 +417,6 @@ if (BUILD_ANGELSCRIPT)
     ExternalProject_Add(
             angelscript
             GIT_REPOSITORY https://github.com/AnotherFoxGuy/angelscript.git
-            GIT_TAG c0e460930d4cb73bcfbeb253cd5611d7156b1cce
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
