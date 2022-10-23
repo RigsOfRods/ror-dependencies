@@ -1,0 +1,14 @@
+ExternalProject_Add(
+        fmt
+        GIT_REPOSITORY https://github.com/fmtlib/fmt
+        GIT_TAG 8.0.1
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+        CMAKE_ARGS
+        -DFMT_TEST=OFF
+        -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+)

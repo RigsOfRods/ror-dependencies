@@ -103,349 +103,42 @@ if (UNIX)
     set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${DEPENDENCIES_LIB_DIR}/pkgconfig")
 endif ()
 
-
-# ------------------------------------------------------------------------------------------------#
-#  OpenAL
-# ------------------------------------------------------------------------------------------------#
-
 if (BUILD_OPENAL)
-
-    ExternalProject_Add(
-            openal
-            GIT_REPOSITORY https://github.com/kcat/openal-soft.git
-            GIT_SHALLOW TRUE
-            GIT_PROGRESS TRUE
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
-
+    add_subdirectory(openal)
 endif ()
-
-
-# ------------------------------------------------------------------------------------------------#
-#  cURL
-# ------------------------------------------------------------------------------------------------#
 
 if (BUILD_CURL)
-
-    ExternalProject_Add(
-            curl
-            GIT_REPOSITORY https://github.com/curl/curl.git
-            GIT_TAG curl-7_78_0
-            GIT_SHALLOW TRUE
-            GIT_PROGRESS TRUE
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DBUILD_CURL_TESTS=OFF
-            -DCMAKE_USE_OPENSSL=OFF
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
-
+    add_subdirectory(curl)
 endif ()
 
-
-# ------------------------------------------------------------------------------------------------#
-#  RapidJSON
-# ------------------------------------------------------------------------------------------------#
 if (BUILD_RAPIDJSON)
-    ExternalProject_Add(
-            RapidJSON
-            GIT_REPOSITORY https://github.com/Tencent/rapidjson
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DINCLUDE_INSTALL_DIR=${DEPENDENCIES_OUTPUT_DIR}/include # rapidjson will add "rapidjson" subdirectory
-            -DRAPIDJSON_BUILD_DOC=NO
-            -DRAPIDJSON_BUILD_EXAMPLES=NO
-            -DRAPIDJSON_BUILD_TESTS=NO
-            -DRAPIDJSON_BUILD_THIRDPARTY_GTEST=NO
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
+    add_subdirectory(rapidjson)
 endif ()
-
-# ------------------------------------------------------------------------------------------------#
-#  Ogre3D
-# ------------------------------------------------------------------------------------------------#
 
 if (BUILD_OGRE)
-
-    # First build the required dependencies for Ogre itself. They are provided in a dedicated repository.
-    ExternalProject_Add(
-            ogredeps
-            GIT_REPOSITORY https://github.com/AnotherFoxGuy/ogredeps.git
-            GIT_SHALLOW TRUE
-            GIT_PROGRESS TRUE
-            CMAKE_ARGS
-            -DOGREDEPS_BUILD_AMD_QBS=OFF
-            -DOGREDEPS_BUILD_NVIDIA_NVAPI=OFF
-            -DOGREDEPS_BUILD_RAPIDJSON=OFF
-            -DOGREDEPS_BUILD_REMOTERY=OFF
-            -DOGREDEPS_BUILD_SDL2=OFF
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
-
-    if (WIN32)
-
-        # By default the cg.dll is only installed in the build directory. Therefore manually copy it to the dependency output directory.
-        ExternalProject_Add_Step(
-                ogredeps copy_cg_dll
-                COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/Build/ogredeps/bin/Release/cg.dll ${DEPENDENCIES_BIN_DIR}/cg.dll
-                DEPENDEES build
-        )
-
-        ExternalProject_Add(
-                ogre
-                DEPENDS ogredeps
-                GIT_REPOSITORY https://github.com/only-a-ptr/ogre.git
-                GIT_TAG v1.11.6-with-patches
-                GIT_PROGRESS TRUE
-                PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/patches/scriptlexer.patch
-                CMAKE_ARGS
-                -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-                -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
-                -DFREETYPE_LIBRARY=${DEPENDENCIES_OUTPUT_DIR}/lib/${CMAKE_BUILD_TYPE}/freetype.lib
-                -DZLIB_LIBRARY=${DEPENDENCIES_OUTPUT_DIR}/lib/${CMAKE_BUILD_TYPE}/zlib.lib
-                -DOGRE_BUILD_SAMPLES=OFF
-                -DOGRE_BUILD_TOOLS=ON
-                -DOGRE_BUILD_COMPONENT_BITES=ON
-                -DOGRE_BUILD_COMPONENT_VOLUME=OFF
-                -DOGRE_BUILD_PLUGIN_BSP=OFF
-                -DOGRE_BUILD_PLUGIN_PCZ=OFF
-                -DOGRE_BUILD_RENDERSYSTEM_D3D9=ON
-                -DOGRE_BUILD_RENDERSYSTEM_D3D11=OFF  # TODO
-                -DOGRE_BUILD_RENDERSYSTEM_GL3PLUS=OFF
-                -DOGRE_RESOURCEMANAGER_STRICT=0
-                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-                -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                -DDirectX9_D3DX9_LIBRARY=${CMAKE_SOURCE_DIR}/win32-directx/lib/x86/d3dx9.lib  # Add bundled DirectX libs
-                -DDirectX9_DXERR_LIBRARY=${CMAKE_SOURCE_DIR}/win32-directx/lib/x86/DxErr.lib  # Add bundled DirectX libs
-                -DDirectX9_BUNDLED_INCLUDE_DIR=${CMAKE_SOURCE_DIR}/win32-directx/include      # Add bundled DirectX headers; requires modified CMakeLists.txt
-        )
-    else ()
-        ExternalProject_Add(
-                ogre
-                DEPENDS ogredeps
-                GIT_REPOSITORY https://github.com/OGRECave/ogre.git
-                GIT_TAG v1.11.6
-                GIT_PROGRESS TRUE
-                PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/patches/scriptlexer.patch
-                CMAKE_ARGS
-                -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-                -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
-                -DOGRE_BUILD_SAMPLES=OFF
-                -DOGRE_BUILD_TOOLS=ON
-                -DOGRE_BUILD_COMPONENT_BITES=ON
-                -DOGRE_BUILD_COMPONENT_VOLUME=OFF
-                -DOGRE_BUILD_PLUGIN_BSP=OFF
-                -DOGRE_BUILD_PLUGIN_PCZ=OFF
-                -DOGRE_BUILD_RENDERSYSTEM_GL3PLUS=OFF
-                -DOGRE_RESOURCEMANAGER_STRICT=0
-                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-                -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-        )
-    endif ()
-
-
+    add_subdirectory(ogre)
 endif ()
-
-
-# ------------------------------------------------------------------------------------------------#
-#  MyGUI
-# ------------------------------------------------------------------------------------------------#
 
 if (BUILD_MYGUI)
-
-    ExternalProject_Add(
-            mygui
-            DEPENDS ogre
-            GIT_REPOSITORY https://github.com/MyGUI/mygui.git
-            GIT_TAG MyGUI3.4.0
-            GIT_PROGRESS TRUE
-            CMAKE_ARGS
-            -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
-            -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DMYGUI_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
-            -DOGRE_SOURCE_DIR=${CMAKE_BINARY_DIR}/Source/ogre
-            -DOGRE_BUILD=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
-            -DMYGUI_BUILD_DEMOS=OFF
-            -DMYGUI_BUILD_DOCS=OFF
-            -DMYGUI_BUILD_TEST_APP=OFF
-            -DMYGUI_BUILD_TOOLS=OFF
-            -DMYGUI_BUILD_PLUGINS=NO
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
-
+    add_subdirectory(mygui)
 endif ()
-
-
-# ------------------------------------------------------------------------------------------------#
-#  PagedGeometry
-# ------------------------------------------------------------------------------------------------#
-
 
 if (BUILD_PAGEDGEOMETRY)
-
-    if (WIN32)
-        # Set paths to help find Ogre on Windows
-        set(PAGEDGEOMETRY_CMAKE_ARGS
-                -DOgre_INCLUDE_DIRS=${DEPENDENCIES_INCLUDE_DIR}/OGRE
-                -DOgre_LIBRARY_DIRS=${DEPENDENCIES_LIB_DIR}
-                )
-    elseif (UNIX)
-        # Set pkgconfig path to find Ogre on Linux
-        set(PAGEDGEOMETRY_CMAKE_ARGS
-                -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
-                )
-    endif ()
-
-    ExternalProject_Add(
-            paged-geometry
-            DEPENDS ogre
-            GIT_REPOSITORY https://github.com/RigsOfRods/ogre-pagedgeometry.git
-            CMAKE_ARGS
-            -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
-            -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            ${PAGEDGEOMETRY_CMAKE_ARGS}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-    )
-
+    add_subdirectory(pagedgeometry)
 endif ()
-
-
-# ------------------------------------------------------------------------------------------------#
-#  Caelum
-# ------------------------------------------------------------------------------------------------#
 
 if (BUILD_CAELUM)
-
-    if (WIN32)
-        # Set paths to help find Ogre on Windows
-        set(CAELUM_CMAKE_ARGS
-                -DOgre_INCLUDE_DIRS=${DEPENDENCIES_INCLUDE_DIR}/OGRE
-                -DOgre_LIBRARY_DIRS=${DEPENDENCIES_LIB_DIR}
-                -DOgre_LIBRARIES=${DEPENDENCIES_LIB_DIR}/OgreMain
-                )
-    elseif (UNIX)
-        # Set pkgconfig path on Linux
-        set(CAELUM_CMAKE_ARGS
-                -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
-                )
-    endif ()
-
-    ExternalProject_Add(
-            caelum
-            DEPENDS ogre
-            GIT_REPOSITORY https://github.com/RigsOfRods/ogre-caelum
-            CMAKE_ARGS
-            -DCaelum_BUILD_SAMPLES=FALSE
-            -DINSTALL_OGRE_PLUGIN=OFF
-            -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            ${CAELUM_CMAKE_ARGS}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
-
-    if (WIN32)
-        ExternalProject_Add_Step(
-                caelum patch_pluginscfg
-                COMMAND ${CMAKE_COMMAND} -E echo Plugin=Caelum >> ${DEPENDENCIES_BIN_DIR}/release/plugins.cfg
-                DEPENDEES install
-        )
-    endif ()
-
+    add_subdirectory(caelum)
 endif ()
-
-# ------------------------------------------------------------------------------------------------#
-#  SocketW
-# ------------------------------------------------------------------------------------------------#
 
 if (BUILD_SOCKETW)
-
-    set(SOCKETW_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/socketw)
-
-    ExternalProject_Add(
-            socketw
-            GIT_REPOSITORY https://github.com/RigsOfRods/socketw.git
-            PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/patches/sw_config.h ${SOCKETW_SOURCE_DIR}/src/sw_config.h
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
-
+    add_subdirectory(socketw)
 endif ()
-
-
-# ------------------------------------------------------------------------------------------------#
-#  Angelscript
-# ------------------------------------------------------------------------------------------------#
 
 if (BUILD_ANGELSCRIPT)
-
-    set(ANGELSCRIPT_BUILD_DIR ${CMAKE_BINARY_DIR}/Build/angelscript)
-    set(ANGELSCRIPT_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/angelscript)
-
-    ExternalProject_Add(
-            angelscript
-            GIT_REPOSITORY https://github.com/AnotherFoxGuy/angelscript.git
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
-
+    add_subdirectory(angelscript)
 endif ()
 
-# ------------------------------------------------------------------------------------------------#
-#  fmt
-# ------------------------------------------------------------------------------------------------#
-
 if (BUILD_FMT)
-
-    set(FMT_SOURCE_DIR ${CMAKE_BINARY_DIR}/Source/fmt)
-
-    ExternalProject_Add(
-        fmt
-        GIT_REPOSITORY https://github.com/fmtlib/fmt
-        GIT_TAG 8.0.1
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        CMAKE_ARGS
-        -DFMT_TEST=OFF
-        -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    )
+    add_subdirectory(fmt)
 endif ()
