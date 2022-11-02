@@ -22,6 +22,10 @@
 
 cmake_minimum_required(VERSION 3.2)
 
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.24")
+    cmake_policy(SET CMP0135 NEW)
+endif ()
+
 
 # ------------------------------------------------------------------------------------------------#
 # The intention of this script is to provide a simple solution for building all dependencies

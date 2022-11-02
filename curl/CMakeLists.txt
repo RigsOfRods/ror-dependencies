@@ -1,9 +1,7 @@
 ExternalProject_Add(
         curl
-        GIT_REPOSITORY https://github.com/curl/curl.git
-        GIT_TAG curl-7_85_0
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
+        URL https://github.com/curl/curl/releases/download/curl-7_86_0/curl-7.86.0.tar.gz
+        URL_MD5 f44246e7c13cd91f07095fe63c06353c
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
         -DBUILD_CURL_TESTS=OFF

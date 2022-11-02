@@ -1,9 +1,7 @@
 ExternalProject_Add(
-        fmt
-        GIT_REPOSITORY https://github.com/fmtlib/fmt
-        GIT_TAG 8.0.1
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
+        fmt 
+        URL https://github.com/fmtlib/fmt/releases/download/9.1.0/fmt-9.1.0.zip
+        URL_MD5 6133244fe8ef6f75c5601e8069b37b04
         CMAKE_ARGS
         -DFMT_TEST=OFF
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
