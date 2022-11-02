@@ -9,7 +9,7 @@ jobs:
     env:
       DXSDK_DIR: C:\apps\Microsoft DirectX SDK\
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3.1.0
 
       - name: Install Microsoft DirectX SDK
         shell: cmake -P {0}
