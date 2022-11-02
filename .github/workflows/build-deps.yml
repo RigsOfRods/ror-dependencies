@@ -19,7 +19,7 @@ jobs:
           execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf "$ENV{TMP}/DirectX.zip" WORKING_DIRECTORY "$ENV{DXSDK_DIR}")
 
       - name: Enable Developer Command Prompt
-        uses: ilammy/msvc-dev-cmd@v1.9.0
+        uses: ilammy/msvc-dev-cmd@v1.12.0
 
       - name: Configure
         run: cmake .
