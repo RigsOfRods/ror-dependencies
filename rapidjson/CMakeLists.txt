@@ -1,6 +1,7 @@
 ExternalProject_Add(
      RapidJSON
-     GIT_REPOSITORY https://github.com/Tencent/rapidjson
+     URL https://github.com/Tencent/rapidjson/archive/06d58b9e848c650114556a23294d0b6440078c61.tar.gz
+     URL_MD5 8109e8c5e82864476802d15f89419328
      CMAKE_ARGS
      -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
      -DINCLUDE_INSTALL_DIR=${DEPENDENCIES_OUTPUT_DIR}/include # rapidjson will add "rapidjson" subdirectory
