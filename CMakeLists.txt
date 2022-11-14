@@ -59,6 +59,12 @@ cmake_dependent_option(BUILD_CURL "Build cURL library" ON WIN32 OFF)
 # General setup and initialization
 # ------------------------------------------------------------------------------------------------#
 
+if (WIN32)
+    set(PATCH_TOOL_SCRIPT python ${CMAKE_SOURCE_DIR}/tools/patch.py --verbose)
+else ()
+    set(PATCH_TOOL_SCRIPT patch -p1 <)
+endif ()
+
 include(ExternalProject)
 
 # Set the EP_BASE directory property to setup the build directory structure (see the

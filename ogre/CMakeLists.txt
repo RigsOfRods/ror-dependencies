@@ -31,7 +31,7 @@ ExternalProject_Add(
         DEPENDS ogredeps
         URL https://github.com/OGRECave/ogre/archive/refs/tags/v1.11.6.tar.gz
         URL_MD5 36ca3915aa41a0351bdf08b3953e9ae2
-        PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/scriptlexer.patch
+        PATCH_COMMAND ${PATCH_TOOL_SCRIPT} ${CMAKE_CURRENT_SOURCE_DIR}/scriptlexer.patch
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
         -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
