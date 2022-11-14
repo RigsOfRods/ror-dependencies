@@ -6,17 +6,8 @@ jobs:
   build:
     name: Building windows deps
     runs-on: windows-2019
-    env:
-      DXSDK_DIR: C:\apps\Microsoft DirectX SDK\
     steps:
       - uses: actions/checkout@v3.1.0
-
-      - name: Install Microsoft DirectX SDK
-        shell: cmake -P {0}
-        run: |
-          file(MAKE_DIRECTORY $ENV{DXSDK_DIR})
-          file(DOWNLOAD http://prdownloads.sourceforge.net/rigs-of-rods/DirectX-SDK.zip "$ENV{TMP}/DirectX.zip" SHOW_PROGRESS)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf "$ENV{TMP}/DirectX.zip" WORKING_DIRECTORY "$ENV{DXSDK_DIR}")
 
       - name: Enable Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1.12.0

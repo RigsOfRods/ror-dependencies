@@ -1,3 +1,15 @@
+if (WIN32)
+
+    FetchContent_Declare(
+            directx
+            URL https://prdownloads.sourceforge.net/rigs-of-rods/DirectX-SDK.zip
+            URL_MD5 0bcec91bafb4d6727ca538be40ba2c39
+    )
+    FetchContent_MakeAvailable(directx)
+
+    set(ENV{DXSDK_DIR} ${directx_SOURCE_DIR})
+endif ()
+
 # First build the required dependencies for Ogre itself. They are provided in a dedicated repository.
 ExternalProject_Add(
         ogredeps
@@ -35,6 +47,7 @@ ExternalProject_Add(
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
         -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
+        -DDXSDK_DIR=${directx_SOURCE_DIR}
         -DOGRE_BUILD_COMPONENT_BITES=ON
         -DOGRE_BUILD_COMPONENT_CSHARP=OFF
         -DOGRE_BUILD_COMPONENT_JAVA=OFF
