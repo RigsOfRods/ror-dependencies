@@ -66,6 +66,9 @@ else ()
 endif ()
 
 include(ExternalProject)
+include(FetchContent)
+
+set(FETCHCONTENT_QUIET FALSE)
 
 # Set the EP_BASE directory property to setup the build directory structure (see the
 # ExternalProject documentation for more information)
