@@ -41,8 +41,8 @@ endif ()
 ExternalProject_Add(
         ogre
         DEPENDS ogredeps
-        URL https://github.com/OGRECave/ogre/archive/refs/tags/v13.6.0.tar.gz
-        URL_HASH SHA256=d32e58ad18d5fd9518f6a0dff4e566c281adc7a458b8231aa730983a8646bf95
+        URL https://github.com/OGRECave/ogre/archive/refs/tags/v13.6.4.tar.gz
+        URL_HASH SHA256=9a8bde4884b2ce66594d2192c5147a07ad0e7b0fc87de86c798597142867d272
         #PATCH_COMMAND ${PATCH_TOOL_SCRIPT} ${CMAKE_CURRENT_SOURCE_DIR}/scriptlexer.patch
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
