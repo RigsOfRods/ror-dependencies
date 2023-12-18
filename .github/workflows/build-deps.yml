@@ -19,7 +19,7 @@ jobs:
         run: msbuild /p:Configuration=Release /m ror-dependencies.sln
 
       - name: Upload deps folder
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Dependencies_Windows
           path: Dependencies_Windows_Visual-Studio-16-2019
