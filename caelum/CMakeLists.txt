@@ -15,8 +15,8 @@ endif ()
 ExternalProject_Add(
         caelum
         DEPENDS ogre
-        URL https://github.com/RigsOfRods/ogre-caelum/archive/70fcf62f306288c9472cc03a42367c9625c839ea.tar.gz
-        URL_MD5 6fa41168cb93d67e7169d0e8e2d73f24
+        URL https://github.com/OGRECave/ogre-caelum/archive/4bd1b0581d55896d37922483981582661ca557de.tar.gz
+        URL_MD5 e6378f99faf131624b364829de9d0b8a
         CMAKE_ARGS
         -DCaelum_BUILD_SAMPLES=FALSE
         -DINSTALL_OGRE_PLUGIN=OFF

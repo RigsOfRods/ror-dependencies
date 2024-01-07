@@ -13,8 +13,8 @@ endif ()
 # First build the required dependencies for Ogre itself. They are provided in a dedicated repository.
 ExternalProject_Add(
         ogredeps
-        URL https://github.com/AnotherFoxGuy/ogredeps/archive/17f4c583c82559074a96f1436670a4f10961b9d9.tar.gz
-        URL_MD5 d5425da9f4ffa9f24dd021e32a8665ad
+        URL https://github.com/AnotherFoxGuy/ogredeps/archive/9bb6925e815273ce6bee031e06e4df2a588f8cf3.tar.gz
+        URL_MD5 0f79899efa51ad1dd45f379525f3f6ad
         CMAKE_ARGS
         -DOGREDEPS_BUILD_AMD_QBS=OFF
         -DOGREDEPS_BUILD_NVIDIA_NVAPI=OFF
@@ -41,9 +41,9 @@ endif ()
 ExternalProject_Add(
         ogre
         DEPENDS ogredeps
-        URL https://github.com/OGRECave/ogre/archive/refs/tags/v1.11.6.tar.gz
-        URL_MD5 36ca3915aa41a0351bdf08b3953e9ae2
-        PATCH_COMMAND ${PATCH_TOOL_SCRIPT} ${CMAKE_CURRENT_SOURCE_DIR}/scriptlexer.patch
+        URL https://github.com/OGRECave/ogre/archive/refs/tags/v13.6.4.tar.gz
+        URL_HASH SHA256=9a8bde4884b2ce66594d2192c5147a07ad0e7b0fc87de86c798597142867d272
+        #PATCH_COMMAND ${PATCH_TOOL_SCRIPT} ${CMAKE_CURRENT_SOURCE_DIR}/scriptlexer.patch
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
         -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}

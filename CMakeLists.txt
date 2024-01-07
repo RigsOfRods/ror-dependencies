@@ -33,7 +33,7 @@ endif ()
 # the ExternalProject module of CMake to build the individual dependencies.
 # ------------------------------------------------------------------------------------------------#
 
-project(ror-dependencies VERSION 30)
+project(ror-dependencies VERSION 31)
 
 
 # ------------------------------------------------------------------------------------------------#

@@ -14,8 +14,8 @@ endif ()
 ExternalProject_Add(
         pagedgeometry
         DEPENDS ogre
-        URL https://github.com/RigsOfRods/ogre-pagedgeometry/archive/9b4ee07dd7a884c667fc4051523b26b746bbd2c7.tar.gz
-        URL_MD5 5514a85cccd4132594d17582f9273047
+        URL https://github.com/OGRECave/ogre-pagedgeometry/archive/8637c7f4b6238ced28e741bb6e4d4ddc8b60b477.tar.gz
+        URL_MD5 32b282190b78a6146f2f1388ccb56b08
         CMAKE_ARGS
         -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
         -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}
