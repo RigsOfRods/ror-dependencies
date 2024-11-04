@@ -15,6 +15,7 @@ ExternalProject_Add(
         ogredeps
         URL https://github.com/AnotherFoxGuy/ogredeps/archive/17f4c583c82559074a96f1436670a4f10961b9d9.tar.gz
         URL_MD5 d5425da9f4ffa9f24dd021e32a8665ad
+        PATCH_COMMAND ${PATCH_TOOL_SCRIPT} ${CMAKE_CURRENT_SOURCE_DIR}/ogredeps-freeimage-binaryfunction.patch
         CMAKE_ARGS
         -DOGREDEPS_BUILD_AMD_QBS=OFF
         -DOGREDEPS_BUILD_NVIDIA_NVAPI=OFF
