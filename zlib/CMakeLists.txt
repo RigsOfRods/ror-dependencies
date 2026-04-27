@@ -1,14 +1,10 @@
-load_from_json()
 
 ExternalProject_Add(
-        curl
-        URL ${DOWNLOAD_URL}
-        URL_HASH SHA256=${DOWNLOAD_SHA256}
+        zlib
+        URL "https://zlib.net/zlib-1.3.2.tar.xz"
+        URL_HASH SHA256=d7a0654783a4da529d1bb793b7ad9c3318020af77667bcae35f95d0e42a792f3
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
-        -DBUILD_CURL_TESTS=OFF
-        -DCURL_USE_LIBPSL=OFF
-        -DCMAKE_USE_OPENSSL=OFF
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
         -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}

@@ -18,6 +18,7 @@ ExternalProject_Add(
         URL https://github.com/RigsOfRods/ogre-caelum/archive/70fcf62f306288c9472cc03a42367c9625c839ea.tar.gz
         URL_MD5 6fa41168cb93d67e7169d0e8e2d73f24
         CMAKE_ARGS
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DCaelum_BUILD_SAMPLES=FALSE
         -DINSTALL_OGRE_PLUGIN=OFF
         -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
