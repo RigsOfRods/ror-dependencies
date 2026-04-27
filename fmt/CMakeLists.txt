@@ -1,7 +1,9 @@
+load_from_json()
+
 ExternalProject_Add(
         fmt 
-        URL https://github.com/fmtlib/fmt/releases/download/9.1.0/fmt-9.1.0.zip
-        URL_MD5 6133244fe8ef6f75c5601e8069b37b04
+        URL ${DOWNLOAD_URL}
+        URL_HASH SHA256=${DOWNLOAD_SHA256}
         CMAKE_ARGS
         -DFMT_TEST=OFF
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}

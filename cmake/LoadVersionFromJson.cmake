@@ -1,0 +1,5 @@
+macro(load_from_json)
+    file(READ "${CMAKE_CURRENT_LIST_DIR}/version.json" JSON_DATA)
+    string(JSON DOWNLOAD_URL GET ${JSON_DATA} "url")
+    string(JSON DOWNLOAD_SHA256 GET ${JSON_DATA} "sha256")
+endmacro()

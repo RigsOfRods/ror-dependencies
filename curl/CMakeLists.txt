@@ -1,7 +1,9 @@
+load_from_json()
+
 ExternalProject_Add(
         curl
-        URL https://github.com/curl/curl/releases/download/curl-7_86_0/curl-7.86.0.tar.gz
-        URL_MD5 f44246e7c13cd91f07095fe63c06353c
+        URL ${DOWNLOAD_URL}
+        URL_HASH SHA256=${DOWNLOAD_SHA256}
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
         -DBUILD_CURL_TESTS=OFF
