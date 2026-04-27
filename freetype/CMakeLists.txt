@@ -1,8 +1,8 @@
 
 ExternalProject_Add(
-        freeimage
-        URL "https://github.com/WinMerge/freeimage/archive/ab21cf75e4c13a734d75595bee9854136a60c2a2.zip"
-        URL_MD5 "49fe4cc8cdd8985063c94db5b1139a63"
+        freetype
+        URL "http://prdownloads.sourceforge.net/freetype/freetype-2.14.3.tar.gz"
+        URL_HASH SHA256=e61b31ab26358b946e767ed7eb7f4bb2e507da1cfefeb7a8861ace7fd5c899a1
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
