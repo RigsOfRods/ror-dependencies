@@ -17,6 +17,7 @@ ExternalProject_Add(
         URL https://github.com/RigsOfRods/ogre-pagedgeometry/archive/9b4ee07dd7a884c667fc4051523b26b746bbd2c7.tar.gz
         URL_MD5 5514a85cccd4132594d17582f9273047
         CMAKE_ARGS
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
         -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}

@@ -4,6 +4,7 @@ ExternalProject_Add(
         URL https://github.com/MyGUI/mygui/archive/refs/tags/MyGUI3.4.0.tar.gz
         URL_MD5 30e64cdb3dc09a209259a5ffd13dc2ab
         CMAKE_ARGS
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
         -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
