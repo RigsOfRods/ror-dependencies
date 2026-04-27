@@ -63,12 +63,7 @@ cmake_dependent_option(BUILD_OIS "Build ois" ON WIN32 OFF)
 # General setup and initialization
 # ------------------------------------------------------------------------------------------------#
 
-if (WIN32)
-    set(PATCH_TOOL_SCRIPT python ${CMAKE_SOURCE_DIR}/tools/patch.py --verbose)
-else ()
-    set(PATCH_TOOL_SCRIPT patch -p1 <)
-endif ()
-
+set(PATCH_TOOL_SCRIPT python ${CMAKE_SOURCE_DIR}/tools/patch.py --verbose)
 
 set(FETCHCONTENT_QUIET FALSE)
 
