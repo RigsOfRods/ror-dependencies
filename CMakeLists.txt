@@ -56,7 +56,6 @@ option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
 option(BUILD_FMT "Build fmt" ON)
 
 # Options with different default values on Windows and Linux
-
 cmake_dependent_option(BUILD_CURL "Build cURL library" ON WIN32 OFF)
 cmake_dependent_option(BUILD_OIS "Build ois" ON WIN32 OFF)
 
@@ -141,6 +140,10 @@ if (BUILD_RAPIDJSON)
     add_subdirectory(rapidjson)
 endif ()
 
+if (BUILD_OIS)
+    add_subdirectory(ois)
+endif ()
+
 if (BUILD_OGRE)
     if (WIN32)
         add_subdirectory(freetype)
@@ -174,8 +177,4 @@ endif ()
 
 if (BUILD_FMT)
     add_subdirectory(fmt)
-endif ()
-
-if (BUILD_OIS)
-    add_subdirectory(ois)
 endif ()
