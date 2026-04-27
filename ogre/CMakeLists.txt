@@ -24,7 +24,7 @@ ExternalProject_Add(
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
         -DOGRE_DEPENDENCIES_DIR=${DEPENDENCIES_OUTPUT_DIR}
         -DDXSDK_DIR=${directx_SOURCE_DIR}
-        -DCg_HOME=${cgtoolkit_SOURCE_DIR}
+        -DCg_HOME=${DEPENDENCIES_OUTPUT_DIR}
         -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DOGRE_BUILD_COMPONENT_BITES=ON
         -DOGRE_BUILD_COMPONENT_CSHARP=OFF
@@ -50,7 +50,9 @@ if (WIN32)
     # By default the cg.dll is only installed in the build directory. Therefore manually copy it to the dependency output directory.
     ExternalProject_Add_Step(
             ogre copy_cg
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${cgtoolkit_SOURCE_DIR}/bin/ ${DEPENDENCIES_BIN_DIR}
-            DEPENDEES build
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${cgtoolkit_SOURCE_DIR}/bin64/ ${DEPENDENCIES_BIN_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${cgtoolkit_SOURCE_DIR}/include/ ${DEPENDENCIES_INCLUDE_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${cgtoolkit_SOURCE_DIR}/lib64/ ${DEPENDENCIES_LIB_DIR}
+            DEPENDEES configure
     )
 endif ()
