@@ -20,12 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.5)
 
-if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.24")
-    cmake_policy(SET CMP0135 NEW)
-endif ()
+cmake_policy(SET CMP0135 NEW)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+
+include(CMakeDependentOption)
+include(ExternalProject)
+include(FetchContent)
+include(LoadVersionFromJson)
 
 # ------------------------------------------------------------------------------------------------#
 # The intention of this script is to provide a simple solution for building all dependencies
@@ -33,7 +37,7 @@ endif ()
 # the ExternalProject module of CMake to build the individual dependencies.
 # ------------------------------------------------------------------------------------------------#
 
-project(ror-dependencies VERSION 30)
+project(ror-dependencies VERSION 31)
 
 
 # ------------------------------------------------------------------------------------------------#
@@ -52,8 +56,9 @@ option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
 option(BUILD_FMT "Build fmt" ON)
 
 # Options with different default values on Windows and Linux
-include(CMakeDependentOption)
+
 cmake_dependent_option(BUILD_CURL "Build cURL library" ON WIN32 OFF)
+cmake_dependent_option(BUILD_OIS "Build ois" ON WIN32 OFF)
 
 # ------------------------------------------------------------------------------------------------#
 # General setup and initialization
@@ -65,8 +70,6 @@ else ()
     set(PATCH_TOOL_SCRIPT patch -p1 <)
 endif ()
 
-include(ExternalProject)
-include(FetchContent)
 
 set(FETCHCONTENT_QUIET FALSE)
 
