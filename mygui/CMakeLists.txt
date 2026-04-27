@@ -1,6 +1,10 @@
+if (BUILD_OIS)
+    set(EXTRA_DEPENDS ois)
+endif ()
+
 ExternalProject_Add(
         mygui
-        DEPENDS ogre ois
+        DEPENDS ogre ${EXTRA_DEPENDS}
         URL https://github.com/MyGUI/mygui/archive/refs/tags/MyGUI3.4.3.tar.gz
         URL_MD5 f5642c168df372ab2198dd32e3a40104
         CMAKE_ARGS
