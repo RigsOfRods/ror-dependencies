@@ -142,6 +142,11 @@ if (BUILD_RAPIDJSON)
 endif ()
 
 if (BUILD_OGRE)
+    if (WIN32)
+        add_subdirectory(freeimage)
+        add_subdirectory(zziplib)
+        set(OGRE_DEPS "freeimage zziplib")
+    endif()
     add_subdirectory(ogre)
 endif ()
 
@@ -167,4 +172,8 @@ endif ()
 
 if (BUILD_FMT)
     add_subdirectory(fmt)
+endif ()
+
+if (BUILD_OIS)
+    add_subdirectory(ois)
 endif ()
