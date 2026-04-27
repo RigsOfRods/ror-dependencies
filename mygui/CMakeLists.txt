@@ -1,8 +1,8 @@
 ExternalProject_Add(
         mygui
-        DEPENDS ogre
-        URL https://github.com/MyGUI/mygui/archive/refs/tags/MyGUI3.4.0.tar.gz
-        URL_MD5 30e64cdb3dc09a209259a5ffd13dc2ab
+        DEPENDS ogre ois
+        URL https://github.com/MyGUI/mygui/archive/refs/tags/MyGUI3.4.3.tar.gz
+        URL_MD5 f5642c168df372ab2198dd32e3a40104
         CMAKE_ARGS
         -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
