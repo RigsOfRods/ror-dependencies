@@ -22,4 +22,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Dependencies_Windows
-          path: Dependencies_Windows_Visual-Studio-16-2019
+          path: Dependencies_Windows_Visual-Studio-17-2022
