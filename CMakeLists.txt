@@ -111,6 +111,14 @@ if (UNIX)
 endif ()
 
 
+find_program(SCCACHE_PROGRAM sccache)
+if (SCCACHE_PROGRAM)
+    set(CMAKE_C_COMPILER_LAUNCHER "${SCCACHE_PROGRAM}")
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${SCCACHE_PROGRAM}")
+    message("Using ${SCCACHE_PROGRAM} for speeding up build")
+endif ()
+
+
 # On Linux some packages rely on pkgconfig to be found correctly. Therefore the environment variable
 # needs to be set up accordingly. In addition when building depedencies which need to find other
 # dependencies (e.g. MyGUI searching for OGRE) PKG_CONFIG_USE_CMAKE_PREFIX_PATH needs to be set to TRUE.
