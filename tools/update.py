@@ -14,7 +14,7 @@ for path in dirs:
         repo = data["repo"]
         v = data["version"]
         
-        print(f"test {repo} {v}")
+        print(f"Checking {repo} {v}")
         latest_version = latest(repo=repo, output_format="dict")
         
         if latest_version["version"] > version.parse(v):
@@ -25,7 +25,7 @@ for path in dirs:
             hash = hs.hash_file(tmp_path)
             data["url"] = url
             data["sha256"] = hash
-            data["version"] = latest_version["tag_name"]
+            data["version"] = latest_version["version"]
             print(f'Updated: "{url}" "{hash}"')
             with open(path, "w") as ofile:
                 json.dump(data, ofile, indent=2)
