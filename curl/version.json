@@ -1,6 +1,6 @@
 {
   "repo": "curl/curl",
-  "version": "curl-8_19_0",
-  "url": "https://github.com/curl/curl/archive/refs/tags/curl-8_19_0.tar.gz",
-  "sha256": "3342390f774bda7523464a13c535312962a27b026e7a05ec8dab027a8480327e"
+  "version": "8.21.0",
+  "url": "https://github.com/curl/curl/archive/refs/tags/curl-8_21_0.tar.gz",
+  "sha256": "ec753aa6f408a3ca9f0d6d5f7a77417aecd1544db13c03ae5d443612bf367364"
 }
