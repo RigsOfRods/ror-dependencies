@@ -1,7 +1,7 @@
 
 ExternalProject_Add(
         zlib
-        URL "https://zlib.net/zlib-1.3.2.tar.xz"
+        URL "https://github.com/madler/zlib/releases/download/v1.3.2/zlib-1.3.2.tar.xz"
         URL_HASH SHA256=d7a0654783a4da529d1bb793b7ad9c3318020af77667bcae35f95d0e42a792f3
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
