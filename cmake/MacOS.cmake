@@ -12,7 +12,19 @@ if(ROR_MACOS_GL3)
         endif()
     endforeach()
     enable_language(ASM)
-    file(READ "${CMAKE_SOURCE_DIR}/cmake/macos-sources.json" ROR_MACOS_SOURCES)
+    set(ROR_MACOS_INVENTORY "${CMAKE_SOURCE_DIR}/cmake/macos-sources.json")
+    set(ROR_MACOS_SNAPSHOT "${CMAKE_BINARY_DIR}/macos-configured-inventory.json")
+    file(SHA256 "${ROR_MACOS_INVENTORY}" inventory_hash)
+    if(EXISTS "${ROR_MACOS_SNAPSHOT}")
+        file(SHA256 "${ROR_MACOS_SNAPSHOT}" configured_hash)
+        if(NOT inventory_hash STREQUAL configured_hash)
+            message(FATAL_ERROR "The configured source inventory changed; select a fresh build directory")
+        endif()
+    endif()
+    # COPYONLY registers the live inventory as a CMake regeneration input.
+    configure_file("${ROR_MACOS_INVENTORY}" "${ROR_MACOS_SNAPSHOT}" COPYONLY)
+    file(READ "${ROR_MACOS_SNAPSHOT}" ROR_MACOS_SOURCES)
+    set(ROR_MACOS_CONTEXT "${CMAKE_BINARY_DIR}/macos-configured-build.json")
     # EP's LIST_SEPARATOR preserves multi-architecture and multi-prefix values.
     set(project_includes ${CMAKE_PROJECT_TOP_LEVEL_INCLUDES} "${CMAKE_SOURCE_DIR}/cmake/MacOSExternalProject.cmake")
     string(REPLACE ";" "|" project_includes "${project_includes}")
@@ -110,22 +122,67 @@ function(ror_add_dependency name)
     endif()
     add_dependencies(macos-downloads ${name}-download)
     add_dependencies(macos-patches ${name}-patch)
+    ExternalProject_Get_Property(${name} STAMP_DIR)
+    # Invalidate completed metadata before any component changes the prefix.
+    ExternalProject_Add_Step(${name} macos-begin-install
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/macos_manifest.py" begin-install
+            --configured "${ROR_MACOS_CONTEXT}" --component "${name}"
+        DEPENDEES build DEPENDERS install DEPENDS "${ROR_MACOS_CONTEXT}")
+    # This marker can only update after the component's actual install step.
+    # The main EP completion stamp also waits for all its other install steps.
+    ExternalProject_Add_Step(${name} macos-configured-build
+        COMMAND ${CMAKE_COMMAND} -E copy "${ROR_MACOS_CONTEXT}" "${STAMP_DIR}/macos-configured-build.json"
+        DEPENDEES install DEPENDS "${ROR_MACOS_CONTEXT}")
     set_property(GLOBAL APPEND PROPERTY ROR_MACOS_COMPONENTS ${name})
+    file(GLOB helper_inputs CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.cmake" "${CMAKE_CURRENT_SOURCE_DIR}/*.in")
+    set_property(GLOBAL APPEND PROPERTY ROR_MACOS_RECIPE_INPUTS
+        "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt" ${patch_files} ${helper_inputs})
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/version.json")
+        set_property(GLOBAL APPEND PROPERTY ROR_MACOS_RECIPE_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/version.json")
+    endif()
 endfunction()
 
 function(ror_macos_manifest)
-    add_custom_target(macos-manifest ALL
-        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/macos_manifest.py"
-            --inventory "${CMAKE_SOURCE_DIR}/cmake/macos-sources.json"
-            --recipes "${CMAKE_SOURCE_DIR}" --sources "${CMAKE_BINARY_DIR}/Source"
-            --prefix "${DEPENDENCIES_OUTPUT_DIR}"
-        VERBATIM)
     get_property(components GLOBAL PROPERTY ROR_MACOS_COMPONENTS)
-    add_dependencies(macos-manifest ${components})
-    # Exact local compiler/SDK paths belong to private logs, not installed metadata.
-    execute_process(COMMAND "${CMAKE_CXX_COMPILER}" --version OUTPUT_VARIABLE compiler)
+    get_property(inputs GLOBAL PROPERTY ROR_MACOS_RECIPE_INPUTS)
+    file(GLOB common_inputs CONFIGURE_DEPENDS
+        "${CMAKE_SOURCE_DIR}/cmake/*.cmake" "${CMAKE_SOURCE_DIR}/tools/*.py")
+    list(APPEND inputs "${CMAKE_SOURCE_DIR}/CMakeLists.txt" ${common_inputs})
+    list(REMOVE_DUPLICATES inputs)
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${inputs})
+    execute_process(COMMAND "${CMAKE_CXX_COMPILER}" --version OUTPUT_VARIABLE compiler COMMAND_ERROR_IS_FATAL ANY)
     string(REGEX MATCH "^[^\n]*" compiler "${compiler}")
-    execute_process(COMMAND xcrun --sdk "${CMAKE_OSX_SYSROOT}" --show-sdk-version OUTPUT_VARIABLE sdk OUTPUT_STRIP_TRAILING_WHITESPACE)
-    file(WRITE "${DEPENDENCIES_OUTPUT_DIR}/share/ror-dependencies/build-receipt.txt"
-        "CMake: ${CMAKE_VERSION}\nCompiler: ${compiler}\nSDK: ${sdk}\nArchitecture: ${CMAKE_OSX_ARCHITECTURES}\nDeployment target: ${CMAKE_OSX_DEPLOYMENT_TARGET}\nBuild type: ${CMAKE_BUILD_TYPE}\n")
+    execute_process(COMMAND xcrun --sdk "${CMAKE_OSX_SYSROOT}" --show-sdk-version
+        OUTPUT_VARIABLE sdk OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY)
+    set(context_args)
+    foreach(input IN LISTS inputs)
+        list(APPEND context_args --input "${input}")
+    endforeach()
+    foreach(var CMAKE_BUILD_TYPE CMAKE_OSX_ARCHITECTURES CMAKE_OSX_SYSROOT CMAKE_OSX_DEPLOYMENT_TARGET
+            CMAKE_C_COMPILER CMAKE_CXX_COMPILER CMAKE_ASM_COMPILER CMAKE_C_FLAGS CMAKE_CXX_FLAGS CMAKE_ASM_FLAGS
+            CMAKE_C_FLAGS_RELEASE CMAKE_CXX_FLAGS_RELEASE CMAKE_ASM_FLAGS_RELEASE
+            CMAKE_C_FLAGS_DEBUG CMAKE_CXX_FLAGS_DEBUG CMAKE_ASM_FLAGS_DEBUG
+            CMAKE_C_FLAGS_RELWITHDEBINFO CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_ASM_FLAGS_RELWITHDEBINFO
+            CMAKE_C_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_ASM_FLAGS_MINSIZEREL
+            CMAKE_SHARED_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS CMAKE_EXE_LINKER_FLAGS
+            CMAKE_SHARED_LINKER_FLAGS_RELEASE CMAKE_MODULE_LINKER_FLAGS_RELEASE CMAKE_EXE_LINKER_FLAGS_RELEASE
+            CMAKE_SHARED_LINKER_FLAGS_DEBUG CMAKE_MODULE_LINKER_FLAGS_DEBUG CMAKE_EXE_LINKER_FLAGS_DEBUG
+            CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
+            CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL CMAKE_EXE_LINKER_FLAGS_MINSIZEREL
+            CMAKE_C_COMPILER_LAUNCHER CMAKE_CXX_COMPILER_LAUNCHER)
+        list(APPEND context_args --setting "${var}=${${var}}")
+    endforeach()
+    execute_process(COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/macos_manifest.py" configure
+        --inventory "${ROR_MACOS_SNAPSHOT}" --live-inventory "${ROR_MACOS_INVENTORY}"
+        --recipes "${CMAKE_SOURCE_DIR}" --build "${CMAKE_BINARY_DIR}"
+        --sources "${CMAKE_BINARY_DIR}/Source" --prefix "${DEPENDENCIES_OUTPUT_DIR}"
+        --configured "${ROR_MACOS_CONTEXT}"
+        --setting "cmake_version=${CMAKE_VERSION}" --setting "compiler=${compiler}" --setting "sdk_version=${sdk}"
+        ${context_args} COMMAND_ERROR_IS_FATAL ANY)
+    add_custom_target(macos-manifest ALL
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/macos_manifest.py" complete
+            --configured "${ROR_MACOS_CONTEXT}"
+        VERBATIM)
+    add_dependencies(macos-manifest ${components})
 endfunction()

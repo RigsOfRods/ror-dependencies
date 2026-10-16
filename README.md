@@ -90,11 +90,39 @@ SDK does not establish runtime support on macOS 11.
 
 See [profile provenance](cmake/macos-profile-notes.md) and the exact
 [source inventory](cmake/macos-sources.json). The installed
-`share/ror-dependencies/manifest.json`, `licenses/`, and `build-receipt.txt` retain
-source pins, patch hashes, options and source notices beside the existing
-`version.cmake` contract (30). Exact local toolchain paths belong in private logs.
-The manifest records whether recipes were uncommitted at build time; rebuild its
-metadata after committing to record the final recipe revision.
+`share/ror-dependencies/manifest.json`, `licenses/`, `build-receipt.json` and
+`build-receipt.txt` retain source pins, patch hashes, options, source notices and
+completed build settings beside the existing `version.cmake` contract (30).
+Configure snapshots the inventory and recipe inputs in the build directory;
+changing the source inventory requires a fresh build directory. Metadata is
+published only after every configured dependency has completed installation.
+Configuring another build type or toolchain does not overwrite a completed receipt.
+Before any component installs, completed metadata is replaced with a JSON receipt
+whose state is `in-progress`; the completed manifest and text receipt are absent.
+Consumers must require the JSON `complete` state and matching manifest hashes.
+An interrupted install remains visibly incomplete until the entire graph succeeds.
+
+The JSON receipt has `schema_version: 1`, `state: "complete"`, `profile`,
+`dependencies_version`, `source_inventory_sha256`, `configuration_sha256`,
+`recipe_revision`, `recipe_tree_dirty`, `completed_at` (UTC ISO 8601), and a
+`toolchain` object. Its string fields are `cmake_version`, `compiler`, `sdk_version`,
+`architecture`, `deployment_target`, and `build_type`. The manifest shares the
+receipt's schema, state, hashes, recipe identity and completion time. Private paths
+and full compiler flags remain in the configured build context, outside installed
+metadata. The configuration hash binds that context, including inventory, recipe
+input hashes and build settings; it is not a hash of the installed binaries.
+
+Recipe revision/dirty status describes the repository at metadata publication.
+After a metadata-only commit, refresh it without rebuilding libraries:
+
+```sh
+python3 tools/macos_manifest.py refresh --configured build-macos/macos-configured-build.json
+```
+
+Refresh requires unchanged configured inputs and a prior successful completion
+of that configuration. Changed recipe code requires reconfiguration; changed
+source/patch inventory requires a fresh build directory and build. A refresh
+cannot certify an unbuilt graph.
 
 This is a compile foundation. Native window/event behavior, GL3 UI/RTSS shader
 integration, feature rendering, Retina/input behavior, application packaging and
