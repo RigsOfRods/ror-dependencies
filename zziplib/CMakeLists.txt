@@ -1,11 +1,12 @@
 load_from_json()
 
-ExternalProject_Add(
+ror_add_dependency(
         zziplib
         DEPENDS zlib
         URL ${DOWNLOAD_URL}
         URL_HASH SHA256=${DOWNLOAD_SHA256}
         CMAKE_ARGS
+        -DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}
         -DZZIPMMAPPED=OFF
         -DZZIPFSEEKO=OFF
         -DZZIPWRAP=OFF

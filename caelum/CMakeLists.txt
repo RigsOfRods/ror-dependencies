@@ -1,3 +1,7 @@
+if(ROR_MACOS_GL3)
+    set(CAELUM_MACOS_PATCH PATCH_COMMAND ${ROR_PATCH_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/patches/ogre-include.patch)
+endif()
+
 if (WIN32)
     # Set paths to help find Ogre on Windows
     set(CAELUM_CMAKE_ARGS
@@ -12,11 +16,12 @@ elseif (UNIX)
             )
 endif ()
 
-ExternalProject_Add(
+ror_add_dependency(
         caelum
         DEPENDS ogre
         URL https://github.com/RigsOfRods/ogre-caelum/archive/70fcf62f306288c9472cc03a42367c9625c839ea.tar.gz
         URL_MD5 6fa41168cb93d67e7169d0e8e2d73f24
+        ${CAELUM_MACOS_PATCH}
         CMAKE_ARGS
         -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DCaelum_BUILD_SAMPLES=FALSE
@@ -28,6 +33,7 @@ ExternalProject_Add(
         -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+        ${CAELUM_MACOS_ARGS}
 )
 
 if (WIN32)

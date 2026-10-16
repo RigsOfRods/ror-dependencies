@@ -1,4 +1,4 @@
-ExternalProject_Add(
+ror_add_dependency(
      RapidJSON
      URL https://github.com/Tencent/rapidjson/archive/24b5e7a8b27f42fa16b96fc70aade9106cf7102f.tar.gz
      URL_MD5 531f76775e11b09b28422bfa1d4d59b5

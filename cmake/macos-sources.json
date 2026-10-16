@@ -1,0 +1,401 @@
+{
+  "profile": "native-macos-gl3",
+  "dependencies_version": 30,
+  "notes": [
+    "Compile foundation only; window/rendering/Retina/input parity is unverified.",
+    "Profile differs intentionally from Conan: OpenAL 1.25.1, OIS 1.6.0, curl 8.19.0, zziplib 0.13.80 and source/patch choices.",
+    "Caelum retains mixed MIT root and LGPL source notices; binary redistribution clearance remains a packaging gate.",
+    "zziplib LGPL/MPL dual-license texts retained; future distributor must choose and satisfy applicable terms.",
+    "OpenSSL release archive includes its build-helper sources; Discord downloads no embedded RapidJSON.",
+    "Only required OGRE RTShader GLSL source media is installed; sample artwork is excluded."
+  ],
+  "components": {
+    "RapidJSON": {
+      "url": "https://codeload.github.com/Tencent/rapidjson/tar.gz/24b5e7a8b27f42fa16b96fc70aade9106cf7102f",
+      "sha256": "2d2601a82d2d3b7e143a3c8d43ef616671391034bc46891a9816b79cf2d3e7a8",
+      "version": "24b5e7a",
+      "revision": "24b5e7a8b27f42fa16b96fc70aade9106cf7102f",
+      "license_paths": [
+        "license.txt"
+      ],
+      "options": {
+        "header_only": true
+      },
+      "patches": [],
+      "runtime_roots": [],
+      "repository": "https://github.com/Tencent/rapidjson.git"
+    },
+    "angelscript": {
+      "url": "https://codeload.github.com/AnotherFoxGuy/angelscript/tar.gz/762ab0343a71883d265fcd2e14e0bded02b50a91",
+      "sha256": "1f1d9700ed3b1d3caffcfbf7a8a6bc9c15f573abf5dc7e966ab580727339459e",
+      "version": "2.38.0",
+      "revision": "762ab0343a71883d265fcd2e14e0bded02b50a91",
+      "license_paths": [
+        "include/angelscript.h"
+      ],
+      "options": {
+        "shared": true,
+        "exceptions": true
+      },
+      "patches": [],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/AnotherFoxGuy/angelscript.git"
+    },
+    "caelum": {
+      "url": "https://codeload.github.com/RigsOfRods/ogre-caelum/tar.gz/70fcf62f306288c9472cc03a42367c9625c839ea",
+      "sha256": "ae2830cfca55d72e63db837d04c2394170c4ded186054cd539bc2c093880b672",
+      "version": "70fcf62",
+      "revision": "70fcf62f306288c9472cc03a42367c9625c839ea",
+      "license_paths": [
+        "LICENSE",
+        "main/include/CaelumPrecompiled.h"
+      ],
+      "options": {
+        "shared": true
+      },
+      "patches": [
+        {
+          "path": "caelum/patches/ogre-include.patch",
+          "sha256": "5b4894b1b21dd9bee3e56f4c9c7b1c35291163215b56757e01179bfca037dcc3"
+        }
+      ],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/RigsOfRods/ogre-caelum.git"
+    },
+    "curl": {
+      "version": "8.19.0",
+      "url": "https://github.com/curl/curl/archive/refs/tags/curl-8_19_0.tar.gz",
+      "sha256": "3342390f774bda7523464a13c535312962a27b026e7a05ec8dab027a8480327e",
+      "revision": "8c908d2d0a6d32abdedda2c52e90bd56ec76c24d",
+      "license_paths": [
+        "COPYING"
+      ],
+      "options": {
+        "TLS": "OpenSSL",
+        "SecureTransport": false,
+        "zlib": true,
+        "brotli": false,
+        "zstd": false,
+        "libssh": false,
+        "libssh2": false,
+        "libpsl": false,
+        "GSSAPI": false,
+        "executable": false,
+        "libidn2": false,
+        "nghttp2": false,
+        "Apple_IDN": false
+      },
+      "patches": [
+        {
+          "path": "curl/patches/apple-pipe2-availability.patch",
+          "sha256": "2da0d48eacec6cf74071246c8013e2b000d24b1643abc9c8b927b23424ab3c62"
+        }
+      ],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/curl/curl.git"
+    },
+    "discord-rpc": {
+      "url": "https://codeload.github.com/discord/discord-rpc/tar.gz/e6390c8c4190b59f1cc98bcec688e0037b84974d",
+      "sha256": "54a92b4d0500023cfe275c42ed8fa5f92f04c8e8df5cc02e39d9363895669e2b",
+      "version": "3.4.0",
+      "revision": "e6390c8c4190b59f1cc98bcec688e0037b84974d",
+      "license_paths": [
+        "LICENSE"
+      ],
+      "options": {
+        "shared": true,
+        "I/O_thread": true,
+        "examples": false,
+        "RapidJSON": "shared graph prefix"
+      },
+      "patches": [
+        {
+          "path": "discord-rpc/patches/rapidjson-prefix.patch",
+          "sha256": "505dd80f6a84a969db9299c1cca1e84c0b959c260fb36d78246fd4028f8156be"
+        }
+      ],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/discord/discord-rpc.git"
+    },
+    "fmt": {
+      "url": "https://codeload.github.com/fmtlib/fmt/tar.gz/1be298e1bd68957e4cd352e1f676f00e07dcfb57",
+      "sha256": "d041f836d9b2a3c1c0fe3cce81ffe6a4a257028faa2f4af0dd20d7e58b493766",
+      "version": "12.2.0",
+      "revision": "1be298e1bd68957e4cd352e1f676f00e07dcfb57",
+      "license_paths": [
+        "LICENSE"
+      ],
+      "options": {
+        "shared": true
+      },
+      "patches": [],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/fmtlib/fmt.git"
+    },
+    "freetype": {
+      "url": "https://downloads.sourceforge.net/freetype/freetype-2.14.3.tar.gz",
+      "sha256": "e61b31ab26358b946e767ed7eb7f4bb2e507da1cfefeb7a8861ace7fd5c899a1",
+      "version": "2.14.3",
+      "revision": "0a0221a1347e2f1e07c395263540026e9a0aa7c7",
+      "license_paths": [
+        "LICENSE.TXT",
+        "docs/FTL.TXT"
+      ],
+      "options": {
+        "zlib": true,
+        "bzip2": false,
+        "png": false,
+        "harfbuzz": false,
+        "brotli": false
+      },
+      "patches": [],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://gitlab.freedesktop.org/freetype/freetype.git"
+    },
+    "mygui": {
+      "url": "https://codeload.github.com/MyGUI/mygui/tar.gz/refs/tags/MyGUI3.4.0",
+      "sha256": "d1d5f294670ae71f7200ed4b30859018281d8cfd45d6a38d18b97a4aba604c42",
+      "version": "3.4.0",
+      "revision": "42594b05f87f9cfa6ade9fe4c296ec49b2c9982e",
+      "license_paths": [
+        "COPYING.MIT",
+        "Docs/src/license.txt"
+      ],
+      "options": {
+        "render_system": "OGRE",
+        "framework": true,
+        "demos": false,
+        "tools": false
+      },
+      "patches": [],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/MyGUI/mygui.git"
+    },
+    "ogre": {
+      "url": "https://codeload.github.com/AnotherFoxGuy/ogre/tar.gz/refs/tags/1.11.6.1",
+      "sha256": "31c84051ffe9a3710c553cfa27ebda7b176c9dfe3b4d2a113d4f02caf48ecd5b",
+      "version": "1.11.6.1",
+      "revision": "0ee9c1761cb90e8864ae9b93d9901affa5522444",
+      "license_paths": [
+        "LICENSE",
+        "Docs/License.md",
+        "Docs/licenses/nedmalloc_boost.txt",
+        "PlugIns/STBICodec/src/stbi/stb_image.h",
+        "PlugIns/STBICodec/src/stbi/stb_image_write.h"
+      ],
+      "options": {
+        "GL3PLUS": true,
+        "GL": false,
+        "Cg": false,
+        "STBI": true,
+        "FreeImage": false,
+        "ZIP": true,
+        "Bites": true,
+        "SDL2": false,
+        "Overlay": true,
+        "Paging": true,
+        "RTShaderSystem": true,
+        "MeshLodGenerator": true,
+        "Terrain": true,
+        "frameworks": false,
+        "samples": false,
+        "tools": false,
+        "bulk_media": false,
+        "resource_manager_strictness": 0,
+        "HLMS": true,
+        "Octree": true,
+        "ParticleFX": true
+      },
+      "patches": [
+        {
+          "path": "ogre/scriptlexer.patch",
+          "sha256": "d057e658e630442ebc6cb275aa785b48378fcce9388218259a30eeae44968b31"
+        },
+        {
+          "path": "ogre/patches/macos/arm64-sdk.patch",
+          "sha256": "4223c65a7fac559e356c4fab3c24cdb15021ee992a42cf63eafb48f100cfc582"
+        }
+      ],
+      "runtime_roots": [
+        "lib",
+        "share/OGRE/Media/RTShaderLib/GLSL"
+      ],
+      "repository": "https://github.com/AnotherFoxGuy/ogre.git"
+    },
+    "ois": {
+      "version": "1.6.0",
+      "url": "https://github.com/wgois/OIS/archive/refs/tags/v1.6.0.tar.gz",
+      "sha256": "e3f635286c0992258d5ad85d14b90c85915794b512265bd1d67455c386fc9e5a",
+      "revision": "fe1d32704133fcc83af2b8dbc4468e4f6d35cc9b",
+      "license_paths": [
+        "LICENSE.md"
+      ],
+      "options": {
+        "shared": true,
+        "demos": false
+      },
+      "patches": [
+        {
+          "path": "ois/patches/cocoa-modifiers.patch",
+          "sha256": "8a51124f54313d2309508f7f4d251784c9c8982603a9196aa7db1008d27d4e1a"
+        }
+      ],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/wgois/OIS.git"
+    },
+    "openal": {
+      "version": "1.25.1",
+      "url": "https://github.com/kcat/openal-soft/archive/refs/tags/1.25.1.tar.gz",
+      "sha256": "5f8efe8dfba5e9307a50251ba615ace857c7fa9dddfe34130b83e213d7f7cf24",
+      "revision": "c41d64c6a35f6174bf4a27010aeac52a8d3bb2c6",
+      "license_paths": [
+        "COPYING",
+        "LICENSE-pffft",
+        "gsl/LICENSE",
+        "fmt-11.2.0/LICENSE"
+      ],
+      "options": {
+        "CoreAudio": true,
+        "utilities": false,
+        "examples": false
+      },
+      "patches": [],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/kcat/openal-soft.git"
+    },
+    "openssl": {
+      "url": "https://github.com/openssl/openssl/releases/download/openssl-3.6.3/openssl-3.6.3.tar.gz",
+      "sha256": "243a86649cf6f23eeb6a2ff2456e09e5d77dd9018a54d3d96b0c6bdd6ba6c7f1",
+      "version": "3.6.3",
+      "revision": "aae016bfd52fcad2bc9657c2c782cfdf73b1ed5f",
+      "license_paths": [
+        "LICENSE.txt",
+        "external/perl/Text-Template-1.56/LICENSE"
+      ],
+      "options": {
+        "shared": true,
+        "tests": false,
+        "target": "darwin64-arm64-cc"
+      },
+      "patches": [
+        {
+          "path": "openssl/patches/darwin-install-name.patch",
+          "sha256": "086b52329152ad2b5e8665d29ae499c9a6546fca1f3c5d9e6d97af111d919470"
+        }
+      ],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/openssl/openssl.git",
+      "bundled_source": {
+        "Text-Template": "1.56; included in the hash-pinned upstream release archive; build helper only"
+      }
+    },
+    "pagedgeometry": {
+      "url": "https://codeload.github.com/RigsOfRods/ogre-pagedgeometry/tar.gz/9b4ee07dd7a884c667fc4051523b26b746bbd2c7",
+      "sha256": "9c47f64c8dc0b005d8580db98ac0e58284077b049c10a883932a391fb2c67653",
+      "version": "9b4ee07",
+      "revision": "9b4ee07dd7a884c667fc4051523b26b746bbd2c7",
+      "license_paths": [
+        "README.md",
+        "include/PagedGeometry.h"
+      ],
+      "options": {
+        "shared": false,
+        "reason": "Pinned upstream CMake explicitly builds a static PagedGeometry target",
+        "samples": false
+      },
+      "patches": [],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/RigsOfRods/ogre-pagedgeometry.git"
+    },
+    "socketw": {
+      "version": "3.11.0",
+      "url": "https://github.com/RigsOfRods/socketw/archive/refs/tags/3.11.0.tar.gz",
+      "sha256": "394203af6eabe27dec383fffbcb106bd75e91bf65a07d69e8f2d37d6c4f08371",
+      "revision": "a437a3536610834c7847df02d9afba96b7cf6944",
+      "license_paths": [
+        "LICENSE",
+        "src/sw_internal.h",
+        "src/sw_config.h"
+      ],
+      "options": {
+        "SSL": true,
+        "public_OpenSSL_targets": [
+          "OpenSSL::SSL",
+          "OpenSSL::Crypto"
+        ]
+      },
+      "patches": [
+        {
+          "path": "socketw/patches/openssl-interface.patch",
+          "sha256": "afe42b6e6038f5501f698be56903edd793e80508f61e5eba4546c862835b4850"
+        }
+      ],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/RigsOfRods/socketw.git"
+    },
+    "zlib": {
+      "url": "https://zlib.net/zlib-1.3.2.tar.xz",
+      "sha256": "d7a0654783a4da529d1bb793b7ad9c3318020af77667bcae35f95d0e42a792f3",
+      "version": "1.3.2",
+      "revision": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+      "license_paths": [
+        "LICENSE",
+        "zlib.h"
+      ],
+      "options": {
+        "shared": true
+      },
+      "patches": [],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/madler/zlib.git"
+    },
+    "zziplib": {
+      "version": "0.13.80",
+      "url": "https://github.com/gdraheim/zziplib/archive/refs/tags/v0.13.80.tar.gz",
+      "sha256": "21f40d111c0f7a398cfee3b0a30b20c5d92124b08ea4290055fbfe7bdd53a22c",
+      "revision": "f58313c1f65f46bf73f3526d1afd4d6bb46cc4ae",
+      "license_paths": [
+        "COPYING.LIB",
+        "docs/COPYING.LIB",
+        "docs/COPYING.MPL",
+        "docs/copying.htm.md"
+      ],
+      "options": {
+        "shared": true,
+        "tools": false,
+        "SDL": false
+      },
+      "patches": [],
+      "runtime_roots": [
+        "lib"
+      ],
+      "repository": "https://github.com/gdraheim/zziplib.git"
+    }
+  }
+}

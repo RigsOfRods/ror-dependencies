@@ -1,5 +1,5 @@
 
-ExternalProject_Add(
+ror_add_dependency(
         freeimage
         URL "https://github.com/WinMerge/freeimage/archive/ab21cf75e4c13a734d75595bee9854136a60c2a2.zip"
         URL_MD5 "49fe4cc8cdd8985063c94db5b1139a63"

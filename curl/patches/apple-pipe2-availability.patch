@@ -1,0 +1,20 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1621,7 +1621,16 @@
+ check_symbol_exists("getifaddrs"      "${CURL_INCLUDES};stdlib.h" HAVE_GETIFADDRS)  # ifaddrs.h
+ check_symbol_exists("freeaddrinfo"    "${CURL_INCLUDES}" HAVE_FREEADDRINFO)  # ws2tcpip.h sys/socket.h netdb.h
+ check_function_exists("pipe"          HAVE_PIPE)
+-check_function_exists("pipe2"         HAVE_PIPE2)
++if(APPLE)
++  # A link-only probe finds newer weak SDK symbols below the deployment target.
++  # Include the declaration and make its availability attribute part of the test.
++  set(_curl_saved_required_flags "${CMAKE_REQUIRED_FLAGS}")
++  string(APPEND CMAKE_REQUIRED_FLAGS " -Werror=unguarded-availability")
++  check_symbol_exists("pipe2" "unistd.h" HAVE_PIPE2)
++  set(CMAKE_REQUIRED_FLAGS "${_curl_saved_required_flags}")
++else()
++  check_function_exists("pipe2" HAVE_PIPE2)
++endif()
+ check_function_exists("eventfd"       HAVE_EVENTFD)
+ check_symbol_exists("ftruncate"       "unistd.h" HAVE_FTRUNCATE)
+ check_symbol_exists("getpeername"     "${CURL_INCLUDES}" HAVE_GETPEERNAME)  # winsock2.h unistd.h proto/bsdsocket.h

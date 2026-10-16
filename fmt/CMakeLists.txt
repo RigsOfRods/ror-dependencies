@@ -1,6 +1,6 @@
 load_from_json()
 
-ExternalProject_Add(
+ror_add_dependency(
         fmt 
         URL ${DOWNLOAD_URL}
         URL_HASH SHA256=${DOWNLOAD_SHA256}

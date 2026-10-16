@@ -1,0 +1,11 @@
+--- a/Configurations/shared-info.pl
++++ b/Configurations/shared-info.pl
+@@ -49,7 +49,7 @@
+     'darwin-shared' => {
+         module_ldflags        => '-bundle',
+         shared_ldflag         => '-dynamiclib -current_version $(SHLIB_VERSION_NUMBER) -compatibility_version $(SHLIB_VERSION_NUMBER)',
+-        shared_sonameflag     => '-install_name $(libdir)/',
++        shared_sonameflag     => '-install_name "$(libdir)"/',
+     },
+     'cygwin-shared' => {
+         shared_ldflag         => '-shared -Wl,--enable-auto-image-base',
