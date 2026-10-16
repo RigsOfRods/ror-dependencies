@@ -131,7 +131,8 @@ function(ror_add_dependency name)
     # This marker can only update after the component's actual install step.
     # The main EP completion stamp also waits for all its other install steps.
     ExternalProject_Add_Step(${name} macos-configured-build
-        COMMAND ${CMAKE_COMMAND} -E copy "${ROR_MACOS_CONTEXT}" "${STAMP_DIR}/macos-configured-build.json"
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/macos_manifest.py" finish-install
+            --configured "${ROR_MACOS_CONTEXT}" --component "${name}"
         DEPENDEES install DEPENDS "${ROR_MACOS_CONTEXT}")
     set_property(GLOBAL APPEND PROPERTY ROR_MACOS_COMPONENTS ${name})
     file(GLOB helper_inputs CONFIGURE_DEPENDS

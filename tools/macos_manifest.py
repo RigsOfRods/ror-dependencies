@@ -5,6 +5,8 @@ This receipt establishes build provenance, not binary redistribution clearance.
 Private configured inputs stay in the build directory, outside the public receipt.
 """
 import argparse
+from contextlib import contextmanager
+import fcntl
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -12,6 +14,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import uuid
 
 
 def encoded(data):
@@ -86,18 +89,66 @@ def replace_metadata(output, staged, previous):
         raise
 
 
+@contextmanager
+def prefix_lock(configured):
+    prefix = Path(json.loads(configured.read_bytes())['paths']['prefix'])
+    share = prefix / 'share'
+    share.mkdir(parents=True, exist_ok=True)
+    # Keep the lock outside the directory replaced during metadata publication.
+    # flock releases automatically if a writer exits or is interrupted.
+    with (share / '.ror-dependencies.lock').open('a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            fail('Prefix metadata is in use by another process; retry when it finishes')
+        yield
+
+
+def prefix_state(paths):
+    receipt = paths['prefix'] / 'share/ror-dependencies/build-receipt.json'
+    return json.loads(receipt.read_bytes()) if receipt.exists() else {}
+
+
+def owned_prefix(context, paths):
+    state = prefix_state(paths)
+    if (state.get('configuration_sha256') != context['configuration_sha256']
+            or not state.get('installation_id')
+            or state.get('state') not in ('in-progress', 'complete')):
+        fail('Prefix belongs to another installation; complete its build or use a fresh prefix')
+    return state
+
+
+def finish_install(a):
+    context, paths, data = validate(a.configured, completed=False)
+    state = owned_prefix(context, paths)
+    if a.component not in data['components']:
+        fail(f'Unknown component: {a.component}')
+    stamp = paths['build'] / 'Stamp' / a.component
+    (stamp / 'macos-configured-build.json').write_bytes(a.configured.read_bytes())
+    (stamp / 'macos-prefix-generation').write_text(state['installation_id'])
+
+
 def begin_install(a):
     context, paths, data = validate(a.configured, completed=False)
     if a.component not in data['components']:
         fail(f'Unknown component: {a.component}')
+    current = prefix_state(paths)
+    same = current.get('configuration_sha256') == context['configuration_sha256']
+    if current and current.get('state') not in ('in-progress', 'complete'):
+        fail('Prefix has an unknown state; use a fresh prefix')
+    if current.get('state') == 'in-progress' and not same:
+        fail('Prefix installation is owned by another build; complete it or use a fresh prefix')
+    generation = current.get('installation_id') if same else None
+    generation = generation or uuid.uuid4().hex
     stamp = paths['build'] / 'Stamp' / a.component
+    (stamp / 'macos-prefix-generation').unlink(missing_ok=True)
     (stamp / 'macos-configured-build.json').unlink(missing_ok=True)
     (stamp / (a.component + '-done')).unlink(missing_ok=True)
     (paths['build'] / 'macos-build-complete.json').unlink(missing_ok=True)
     output = paths['prefix'] / 'share/ror-dependencies'
     output.parent.mkdir(parents=True, exist_ok=True)
     state = {key: context[key] for key in ('source_inventory_sha256', 'configuration_sha256')}
-    state.update(schema_version=1, state='in-progress', profile=data['profile'],
+    state.update(schema_version=1, state='in-progress', installation_id=generation, profile=data['profile'],
                  dependencies_version=data['dependencies_version'])
     with tempfile.TemporaryDirectory(prefix='.ror-metadata-', dir=output.parent) as temporary:
         staged = Path(temporary) / 'ror-dependencies'
@@ -109,9 +160,15 @@ def begin_install(a):
 
 def publish(a):
     context, paths, data = validate(a.configured)
+    state = owned_prefix(context, paths)
+    for name in data['components']:
+        generation = paths['build'] / 'Stamp' / name / 'macos-prefix-generation'
+        if not generation.is_file() or generation.read_text() != state['installation_id']:
+            fail(f'Component {name} has not installed into the current prefix generation')
     completion_path = paths['build'] / 'macos-build-complete.json'
     completion = json.loads(completion_path.read_bytes()) if completion_path.exists() else {}
     identity = {key: context[key] for key in ('configuration_sha256', 'source_inventory_sha256')}
+    identity['installation_id'] = state['installation_id']
     matches = completion.get('state') == 'complete' and all(
         completion.get(key) == value for key, value in identity.items())
     if a.phase == 'refresh' and not matches:
@@ -172,18 +229,22 @@ def main():
         config.add_argument('--' + name, type=Path, required=True)
     config.add_argument('--input', type=Path, action='append', default=[])
     config.add_argument('--setting', action='append', default=[])
-    for phase in ('begin-install', 'complete', 'refresh'):
+    for phase in ('begin-install', 'finish-install', 'complete', 'refresh'):
         command = subparsers.add_parser(phase)
         command.add_argument('--configured', type=Path, required=True)
-        if phase == 'begin-install':
+        if phase in ('begin-install', 'finish-install'):
             command.add_argument('--component', required=True)
     args = parser.parse_args()
     if args.phase == 'configure':
         configure(args)
-    elif args.phase == 'begin-install':
-        begin_install(args)
     else:
-        publish(args)
+        with prefix_lock(args.configured):
+            if args.phase == 'begin-install':
+                begin_install(args)
+            elif args.phase == 'finish-install':
+                finish_install(args)
+            else:
+                publish(args)
 
 
 if __name__ == '__main__':

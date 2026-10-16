@@ -101,13 +101,21 @@ Before any component installs, completed metadata is replaced with a JSON receip
 whose state is `in-progress`; the completed manifest and text receipt are absent.
 Consumers must require the JSON `complete` state and matching manifest hashes.
 An interrupted install remains visibly incomplete until the entire graph succeeds.
+The in-progress receipt owns the prefix for its configured build: another build
+cannot begin installing or publish metadata over it. Complete that owning build
+or choose a fresh prefix. A completed prefix may be replaced by another build,
+but the replacement earns a new installation ID and every component must install
+into that generation before completion. Older build directories cannot refresh
+or complete over the new owner. Metadata updates use a prefix-level process lock;
+configuration alone does not acquire ownership or write metadata.
 
 The JSON receipt has `schema_version: 1`, `state: "complete"`, `profile`,
 `dependencies_version`, `source_inventory_sha256`, `configuration_sha256`,
-`recipe_revision`, `recipe_tree_dirty`, `completed_at` (UTC ISO 8601), and a
+`recipe_revision`, `recipe_tree_dirty`, `completed_at` (UTC ISO 8601),
+`installation_id` (32 hexadecimal digits), and a
 `toolchain` object. Its string fields are `cmake_version`, `compiler`, `sdk_version`,
 `architecture`, `deployment_target`, and `build_type`. The manifest shares the
-receipt's schema, state, hashes, recipe identity and completion time. Private paths
+receipt's schema, state, hashes, recipe identity, installation ID and completion time. Private paths
 and full compiler flags remain in the configured build context, outside installed
 metadata. The configuration hash binds that context, including inventory, recipe
 input hashes and build settings; it is not a hash of the installed binaries.
