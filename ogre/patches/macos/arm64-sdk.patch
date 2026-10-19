@@ -1,0 +1,29 @@
+diff --git a/OgreMain/include/OgrePlatformInformation.h b/OgreMain/include/OgrePlatformInformation.h
+--- a/OgreMain/include/OgrePlatformInformation.h
++++ b/OgreMain/include/OgrePlatformInformation.h
+@@ -51,7 +51,7 @@
+ 
+ #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE && defined(__BIG_ENDIAN__)
+ #   define OGRE_CPU OGRE_CPU_PPC
+-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
++#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE && (defined(__i386__) || defined(__x86_64__))
+ #   define OGRE_CPU OGRE_CPU_X86
+ #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS && (defined(__i386__) || defined(__x86_64__))
+ #   define OGRE_CPU OGRE_CPU_X86
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -270,11 +270,9 @@
+ elseif (APPLE AND NOT APPLE_IOS)
+ 
+   set(XCODE_ATTRIBUTE_SDKROOT macosx)
+-  if(CMAKE_GENERATOR STREQUAL "Unix Makefiles")
+-    execute_process(COMMAND xcodebuild -version -sdk "${XCODE_ATTRIBUTE_SDKROOT}" Path | head -n 1 OUTPUT_VARIABLE CMAKE_OSX_SYSROOT)
++  if(NOT CMAKE_OSX_SYSROOT OR CMAKE_OSX_SYSROOT STREQUAL "macosx")
++    execute_process(COMMAND xcrun --show-sdk-path OUTPUT_VARIABLE CMAKE_OSX_SYSROOT)
+     string(REGEX REPLACE "(\r?\n)+$" "" CMAKE_OSX_SYSROOT "${CMAKE_OSX_SYSROOT}")
+-  else()
+-    set(CMAKE_OSX_SYSROOT macosx)
+   endif()
+ 
+   # Make sure that the OpenGL render system is selected for non-iOS Apple builds

@@ -1,3 +1,9 @@
+if(ROR_MACOS_GL3)
+    set(PAGEDGEOMETRY_PREFIX_ARGS "-DCMAKE_PREFIX_PATH=${DEPENDENCIES_OUTPUT_DIR}")
+else()
+    set(PAGEDGEOMETRY_PREFIX_ARGS "-DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}")
+endif()
+
 if (WIN32)
     # Set paths to help find Ogre on Windows
     set(PAGEDGEOMETRY_CMAKE_ARGS
@@ -11,7 +17,7 @@ elseif (UNIX)
             )
 endif ()
 
-ExternalProject_Add(
+ror_add_dependency(
         pagedgeometry
         DEPENDS ogre
         URL https://github.com/RigsOfRods/ogre-pagedgeometry/archive/9b4ee07dd7a884c667fc4051523b26b746bbd2c7.tar.gz
@@ -19,7 +25,7 @@ ExternalProject_Add(
         CMAKE_ARGS
         -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DPAGEDGEOMETRY_BUILD_SAMPLES=OFF
-        -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/OgreDependencies/;${DEPENDENCIES_OUTPUT_DIR}
+        ${PAGEDGEOMETRY_PREFIX_ARGS}
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
         ${PAGEDGEOMETRY_CMAKE_ARGS}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}

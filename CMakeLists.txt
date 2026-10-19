@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.24)
 
 cmake_policy(SET CMP0135 NEW)
 
@@ -39,6 +39,11 @@ include(LoadVersionFromJson)
 
 project(ror-dependencies VERSION 30)
 
+option(ROR_MACOS_GL3 "Build the pinned native macOS GL3 source profile" OFF)
+if(ROR_MACOS_GL3 AND (NOT APPLE OR CMAKE_CROSSCOMPILING))
+    message(FATAL_ERROR "ROR_MACOS_GL3 requires a native macOS toolchain")
+endif()
+
 
 # ------------------------------------------------------------------------------------------------#
 # Options to enable/disable building specific dependencies
@@ -55,15 +60,16 @@ option(BUILD_CAELUM "Build Caelum library" ON)
 option(BUILD_RAPIDJSON "Build RapidJSON library" ON)
 option(BUILD_FMT "Build fmt" ON)
 
-# Options with different default values on Windows and Linux
-cmake_dependent_option(BUILD_CURL "Build cURL library" ON WIN32 OFF)
-cmake_dependent_option(BUILD_OIS "Build ois" ON WIN32 OFF)
+# Options with platform-specific default values
+cmake_dependent_option(BUILD_CURL "Build cURL library" ON "WIN32 OR APPLE" OFF)
+cmake_dependent_option(BUILD_OIS "Build ois" ON "WIN32 OR APPLE" OFF)
 
 # ------------------------------------------------------------------------------------------------#
 # General setup and initialization
 # ------------------------------------------------------------------------------------------------#
 
-set(PATCH_TOOL_SCRIPT python ${CMAKE_SOURCE_DIR}/tools/patch.py --verbose)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+set(PATCH_TOOL_SCRIPT ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/patch.py --verbose)
 
 set(FETCHCONTENT_QUIET FALSE)
 
@@ -73,7 +79,9 @@ set_property(DIRECTORY PROPERTY EP_BASE ${CMAKE_BINARY_DIR})
 
 
 # Determine the name for the output directory where dependencies are going to be installed
-if (WIN32)
+if(DEPENDENCIES_OUTPUT_DIR)
+    get_filename_component(DEPENDENCIES_OUTPUT_DIR "${DEPENDENCIES_OUTPUT_DIR}" ABSOLUTE)
+elseif (WIN32)
     set(DEPENDENCIES_OUTPUT_DIR ${CMAKE_BINARY_DIR}/Dependencies_${CMAKE_SYSTEM_NAME}_${CMAKE_GENERATOR})
     string(REPLACE " " "-" DEPENDENCIES_OUTPUT_DIR ${DEPENDENCIES_OUTPUT_DIR})
 else ()
@@ -102,7 +110,7 @@ if (MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj /w")
 endif ()
 
-if (UNIX)
+if (UNIX AND NOT ROR_MACOS_GL3)
     set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wno-deprecated-declarations -Wno-attributes")
 endif ()
@@ -123,6 +131,13 @@ if (UNIX)
     set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${DEPENDENCIES_LIB_DIR}/pkgconfig")
 endif ()
 
+include(MacOS)
+
+if(ROR_MACOS_GL3)
+    add_subdirectory(openssl)
+    add_subdirectory(zlib)
+endif()
+
 if (BUILD_OPENAL)
     add_subdirectory(openal)
 endif ()
@@ -135,12 +150,20 @@ if (BUILD_RAPIDJSON)
     add_subdirectory(rapidjson)
 endif ()
 
+if(ROR_MACOS_GL3)
+    add_subdirectory(discord-rpc)
+endif()
+
 if (BUILD_OIS)
     add_subdirectory(ois)
 endif ()
 
 if (BUILD_OGRE)
-    if (WIN32)
+    if(ROR_MACOS_GL3)
+        add_subdirectory(freetype)
+        add_subdirectory(zziplib)
+        set(OGRE_DEPS freetype zziplib)
+    elseif (WIN32)
         add_subdirectory(freetype)
         add_subdirectory(freeimage)
         add_subdirectory(zlib)
@@ -173,3 +196,7 @@ endif ()
 if (BUILD_FMT)
     add_subdirectory(fmt)
 endif ()
+
+if(ROR_MACOS_GL3)
+    ror_macos_manifest()
+endif()

@@ -1,7 +1,15 @@
+set(FREETYPE_MACOS_ARGS)
+if(ROR_MACOS_GL3)
+    set(FREETYPE_MACOS_DEPS zlib)
+    set(FREETYPE_MACOS_ARGS -DFT_REQUIRE_ZLIB=ON -DFT_DISABLE_BZIP2=ON
+        -DFT_DISABLE_PNG=ON -DFT_DISABLE_HARFBUZZ=ON -DFT_DISABLE_BROTLI=ON)
+endif()
 
-ExternalProject_Add(
+
+ror_add_dependency(
         freetype
-        URL "http://prdownloads.sourceforge.net/freetype/freetype-2.14.3.tar.gz"
+        DEPENDS ${FREETYPE_MACOS_DEPS}
+        URL "https://downloads.sourceforge.net/freetype/freetype-2.14.3.tar.gz"
         URL_HASH SHA256=e61b31ab26358b946e767ed7eb7f4bb2e507da1cfefeb7a8861ace7fd5c899a1
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_OUTPUT_DIR}
@@ -11,4 +19,5 @@ ExternalProject_Add(
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_C_COMPILER_LAUNCHER=${CMAKE_C_COMPILER_LAUNCHER}
         -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}
+        ${FREETYPE_MACOS_ARGS}
 )

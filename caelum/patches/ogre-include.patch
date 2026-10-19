@@ -1,0 +1,26 @@
+diff --git a/main/include/CaelumPrecompiled.h b/main/include/CaelumPrecompiled.h
+index e93bd84..69a5460 100644
+--- a/main/include/CaelumPrecompiled.h
++++ b/main/include/CaelumPrecompiled.h
+@@ -19,7 +19,7 @@ along with Caelum. If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+ #ifdef __APPLE__
+-#include "Ogre/Ogre.h"
++#include <Ogre.h>
+ #else
+ #include "Ogre.h"
+ #endif
+diff --git a/main/include/CaelumPrerequisites.h b/main/include/CaelumPrerequisites.h
+index 94201e5..f2136ee 100644
+--- a/main/include/CaelumPrerequisites.h
++++ b/main/include/CaelumPrerequisites.h
+@@ -7,7 +7,7 @@
+ 
+ // Include external headers
+ #ifdef __APPLE__
+-#include "Ogre/Ogre.h"
++#include <Ogre.h>
+ #else
+ #include "Ogre.h"
+ #include "OgreBuildSettings.h"

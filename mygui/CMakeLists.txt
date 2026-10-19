@@ -1,8 +1,16 @@
+set(MYGUI_MACOS_ARGS)
+if(ROR_MACOS_GL3)
+    set(MYGUI_MACOS_ARGS -DMYGUI_RENDERSYSTEM=3 -DMYGUI_SAMPLES_INPUT=1
+        -DFREETYPE_INCLUDE_DIRS=${DEPENDENCIES_OUTPUT_DIR}/include/freetype2
+        -DFREETYPE_LIBRARY_REL=${DEPENDENCIES_OUTPUT_DIR}/lib/libfreetype.dylib
+        -DCMAKE_DISABLE_FIND_PACKAGE_SDL2=TRUE)
+endif()
+
 if (BUILD_OIS)
     set(EXTRA_DEPENDS ois)
 endif ()
 
-ExternalProject_Add(
+ror_add_dependency(
         mygui
         DEPENDS ogre ${EXTRA_DEPENDS}
         URL https://github.com/MyGUI/mygui/archive/refs/tags/MyGUI3.4.0.tar.gz
@@ -27,4 +35,5 @@ ExternalProject_Add(
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_C_COMPILER_LAUNCHER=${CMAKE_C_COMPILER_LAUNCHER}
         -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}
+        ${MYGUI_MACOS_ARGS}
 )
